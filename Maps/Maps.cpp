@@ -10,7 +10,7 @@ using namespace std;
 
 int difficulty;
 bool initialized = false;
-vector<vector<int>> map;
+vector<vector <int> > map;
 
 Maps::Maps() {
     initialized = false;
@@ -40,7 +40,11 @@ void Maps::set_difficulty(int x) {
 *   Init the map vector
 */
 void Maps::initialize_map() {
-    map(difficulty, vector<int>(difficulty, 0));
+    for(int x=0; x<difficulty; x++) {
+        vector<int> v(difficulty, 0);
+        map.push_back(v);
+    }
+    //map.vector(difficulty, vector<int>(difficulty, 0));
     set_points();
 }
 
@@ -58,8 +62,8 @@ void Maps::set_points() {
     }
     // set the values so our algorithm knows where
     // to start and end
-    map.at(start).at(start) = 1;
-    map.at(end).at(end) = 2;
+    map.at(start).at(start) = -1;
+    map.at(end).at(end) = -2;
 }
 
 void Maps::print_map() {
@@ -68,7 +72,7 @@ void Maps::print_map() {
     vector<int>::iterator column;
     for(row = map.begin(); row != map.end(); row++) {
         for(column = row->begin(); column != row->end(); column++) {
-            out += to_string(*column) + " ";
+            out += to_string(*column) + "\t";
         }
         out += "\n";
     }
