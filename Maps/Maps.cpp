@@ -41,10 +41,9 @@ void Maps::set_difficulty(int x) {
 */
 void Maps::initialize_map() {
     for(int x=0; x<difficulty; x++) {
-        vector<int> v(difficulty, 0);
+        vector<int> v(difficulty,0);
         map.push_back(v);
     }
-    //map.vector(difficulty, vector<int>(difficulty, 0));
     set_points();
 }
 
@@ -54,16 +53,19 @@ void Maps::initialize_map() {
 */
 void Maps::set_points() {
     srand(time(NULL));
-    int start = rand()%difficulty;
-    int end = rand()%difficulty;
+    int startx = rand()%difficulty;
+    int starty = rand()%difficulty;
+    int endx = rand()%difficulty;
+    int endy = rand()%difficulty;
     // ensure our start/ends aren't the same
-    while(start == end) {
-        end = rand()%difficulty;
+    while(startx == endx && starty == endy) {
+        endx = rand()%difficulty;
+        endy = rand()%difficulty;
     }
     // set the values so our algorithm knows where
     // to start and end
-    map.at(start).at(start) = -1;
-    map.at(end).at(end) = -2;
+    map.at(startx).at(starty) = -1;
+    map.at(endx).at(endy) = -2;
 }
 
 void Maps::print_map() {
