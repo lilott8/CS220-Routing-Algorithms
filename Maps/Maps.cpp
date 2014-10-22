@@ -1,16 +1,19 @@
 #include <vector>
-#include "Maps.h"
-#include <time.h>
 #include <stdlib.h>
 #include <string>
 #include <ostream>
 #include <iostream>
+#include "Maps.h"
+#include "../Coordinates.h"
 
 using namespace std;
 
 int difficulty;
 bool initialized = false;
 vector<vector <int> > map;
+
+Coordinates source_coordinates;
+Coordinates sink_coordinates;
 
 Maps::Maps() {
     initialized = false;
@@ -23,7 +26,7 @@ Maps::Maps(int x) {
     initialized = true;
 }
 
-vector<vector<int> > Maps::get_map() {
+vector< vector<int> > Maps::get_map() {
     return map;
 }
 
@@ -34,6 +37,14 @@ void Maps::set_difficulty(int x) {
         set_points();
     }
 }
+
+Coordinates Maps::get_sink_coordinates() {
+    return sink_coordinates;
+};
+
+Coordinates Maps::get_source_coordinates() {
+    return source_coordinates;
+};
 
 /**
 * @method:
@@ -57,11 +68,20 @@ void Maps::set_points() {
     int starty = rand()%difficulty;
     int endx = rand()%difficulty;
     int endy = rand()%difficulty;
+
+    source_coordinates.x = startx;
+    source_coordinates.y = starty;
+
     // ensure our start/ends aren't the same
     while(startx == endx && starty == endy) {
         endx = rand()%difficulty;
         endy = rand()%difficulty;
     }
+    // Must occur after the loop so that
+    // they are correct
+    sink_coordinates.x = endx;
+    sink_coordinates.y = endy;
+
     // set the values so our algorithm knows where
     // to start and end
     map.at(startx).at(starty) = -1;

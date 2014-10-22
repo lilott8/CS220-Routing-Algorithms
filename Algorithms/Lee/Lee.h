@@ -1,10 +1,24 @@
+#include <deque>
+#include "../../Maps/Maps.h"
+
+using namespace std;
+
+class Coordinates;
+class Maps;
+
 class Lee {
 
 public:
-    int get_lee();
-    void set_lee(int);
-
+    // Constructor
+    Lee(Maps);
+    // Methods
+    void start_lee();
+    // Variables
 private:
-    void do_lee();
-    int lee_value;
+    // Methods
+    void run_lee(deque<Coordinates>, int);
+    // Variables
+    Maps lee_map;
+    Coordinates sink_coords;
+    Coordinates source_coords;
 };
