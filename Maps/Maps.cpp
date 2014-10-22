@@ -4,7 +4,7 @@
 #include <ostream>
 #include <iostream>
 #include "Maps.h"
-#include "../Coordinates.h"
+#include "../DataStructures/Global.h"
 
 using namespace std;
 

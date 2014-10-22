@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "../Coordinates.h"
+#include "../DataStructures/Global.h"
 
 using namespace std;
 
@@ -18,6 +18,7 @@ public:
     // Variables
     static const int SOURCE_NUMBER = -1;
     static const int SINK_NUMBER = -2;
+    static const int UNTRAVERSABLE_NUMBER = -3;
 private:
     // Methods
     void initialize_map();
