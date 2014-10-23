@@ -19,7 +19,7 @@ public:
     // Variables
 private:
     // Methods
-    void run_lee(deque<node>, int*);
+    void run_lee(deque<node*>, int*);
     // Variables
     Maps lee_map;
     Coordinates sink_coords;

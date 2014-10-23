@@ -28,7 +28,8 @@ void BinaryTree::insert(Coordinates c, node *leaf) {
             leaf->left->left = NULL; // create NP's to new, non-existent nodes
             leaf->left->right = NULL; // create NP's to new, non-existent nodes
         }
-    } else if(c.x >= leaf->coord.x) {
+        // if it's greater, go right!
+    } else if(c.x > leaf->coord.x) {
         if (leaf->right != NULL) {
             insert(c, leaf->right);
         } else {
@@ -36,6 +37,29 @@ void BinaryTree::insert(Coordinates c, node *leaf) {
             leaf->right->coord = c;
             leaf->right->left = NULL;
             leaf->right->right = NULL;
+        }
+        // If it's equal, then we will defer to the Y coordinate
+    } else {
+        // If it's less than the current y, then push it left
+        if(c.y < leaf->coord.y) {
+            if(leaf->left != NULL) {
+                insert(c, leaf->left);
+            } else {
+                leaf->left = new node;
+                leaf->left->coord = c;
+                leaf->left->left = NULL; // create NP's to new, non-existent nodes
+                leaf->left->right = NULL; // create NP's to new, non-existent nodes
+            }
+            // Otherwise, push it right
+        } else {
+            if (leaf->right != NULL) {
+                insert(c, leaf->right);
+            } else {
+                leaf->right = new node;
+                leaf->right->coord = c;
+                leaf->right->left = NULL;
+                leaf->right->right = NULL;
+            }
         }
     }
 }
@@ -75,6 +99,6 @@ void BinaryTree::destroy_tree() {
     destroy_tree(root);
 }
 
-node &BinaryTree::get_root() {
-    return (node &) root;
+node *BinaryTree::get_root() {
+    return root;
 }

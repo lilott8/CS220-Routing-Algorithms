@@ -2,7 +2,6 @@
 #include <deque>
 #include <iostream>
 #include "../../Maps/Maps.h"
-//#include "../../DataStructures/Coordinates.h"
 #include "Lee.h"
 #include "../../DataStructures/BinaryTree.h"
 
@@ -12,8 +11,9 @@ Maps lee_map;
 
 Coordinates sink_coords;
 Coordinates source_coords;
-Coordinates temp;
 BinaryTree bTree;
+
+int iteration;
 
 Lee::Lee(Maps m) {
     lee_map = m;
@@ -34,40 +34,48 @@ Lee::~Lee() {
 
 void Lee::start_lee() {
 
-    deque<node> queue;
+    deque<node*> queue;
+    int nodes = 0;
 
     // holder for our coordinate struct
     Coordinates c;
 
-    // add all the elements greater than the sink on the x-axis
+    // add all the elements greater than the source on the x-axis
     for(int x=source_coords.x; x<lee_map.get_map().size();x++) {
         for(int y=source_coords.y;y<lee_map.get_map().at(x).size();y++) {
             c.x = x;
             c.y = y;
             bTree.insert(c);
+            nodes++;
         }
         // deduct 1 so that we don't add the same cells twice
         for(int y=source_coords.y-1;y>=0;y--) {
             c.x = x;
             c.y = y;
             bTree.insert(c);
+            nodes++;
         }
     }
 
-    // add all the elements less than the sink on the x-axis
-    for(int x=source_coords.x;x>=0;x--) {
+    // add all the elements less than the source on the x-axis
+    for(int x=source_coords.x-1;x>=0;x--) {
         for(int y=source_coords.y;y<lee_map.get_map().at(x).size();y++) {
             c.x = x;
             c.y = y;
             bTree.insert(c);
+            nodes++;
         }
         // deduct 1 so that we don't add the same cells twice
         for(int y=source_coords.y-1;y>=0;y--) {
             c.x = x;
             c.y = y;
             bTree.insert(c);
+            nodes++;
         }
     }
+
+    printf("there are %d nodes, from counting in the loops\n", nodes);
+
     queue.push_back(bTree.get_root());
     run_lee(queue, 0);
 }
@@ -77,9 +85,9 @@ void Lee::start_lee() {
 * to the sink from the source
 * http://stackoverflow.com/questions/2969033/recursive-breadth-first-travel-function-in-java-or-c
 */
-void Lee::run_lee(deque<node> queue, int *iteration) {
+void Lee::run_lee(deque<node*> queue, int *iteration) {
 
-    printf("Size of queue is: %d\n", queue.size());
+    //printf("Size of queue at top of run_lee is: %lu\n", queue.size());
     // Base Case, nothing on our queue
     if(queue.size() == 0) {
         printf("Somehow we didn't find the sink at (%d, %d), with %d iterations.\n",
@@ -89,27 +97,33 @@ void Lee::run_lee(deque<node> queue, int *iteration) {
 
     // Unfortunately this is how we have to do this
     // grab the first element from the queue
-    node curr_node = queue.front();
-    Coordinates curr_coord = curr_node.coord;
+    node *curr_node = queue.front();
+    Coordinates curr_coord = curr_node->coord;
     // then pop it off :(
     queue.pop_front();
-    printf("Size of queue is: %d\n", queue.size());
+    printf("We are looking at point(%d, %d)\n", curr_coord.x, curr_coord.y);
 
     // Case of finding our sink
     if(curr_coord.x == sink_coords.x && curr_coord.y == sink_coords.y) {
-        printf("We found our sink in %d moves.\n", iteration);
+        printf("We found our sink (%d, %d) in %d moves.\n", sink_coords.x, sink_coords.y, iteration);
         return;
     }
 
     // breadth search here
-    if(curr_node.left != NULL) {
-        queue.push_back((node &)curr_node.left);
-        printf("Size of queue is: %d\n", queue.size());
+    if(curr_node->left != NULL) {
+        queue.push_back(curr_node->left);
+        //printf("Size of queue after pushing a left leaf is: %lu\n", queue.size());
+    } else {
+        //printf("Node has no child to the left.\n");
     }
-    if(curr_node.right != NULL) {
-        queue.push_back((node &)curr_node.right);
-        printf("Size of queue is: %d\n", queue.size());
+    if(curr_node->right != NULL) {
+        queue.push_back(curr_node->right);
+        //printf("Size of queue after pushing a right leaf is: %lu\n", queue.size());
+    } else {
+        //printf("node has no child to the right.\n");
     }
 
-    run_lee(queue, iteration++);
+    //printf("Size of queue at end of method: %lu\n", queue.size());
+    printf("On iteration: %d\n", iteration);
+    run_lee(queue, iteration+1);
 }

@@ -89,16 +89,21 @@ void Maps::set_points() {
 }
 
 void Maps::print_map() {
-    string out = "";
+    string output = "";
     vector< vector<int> >::iterator row;
     vector<int>::iterator column;
     for(row = map.begin(); row != map.end(); row++) {
         for(column = row->begin(); column != row->end(); column++) {
-            out += to_string(*column) + "\t";
+            output += to_string(*column) + "\t";
         }
-        out += "\n";
+        output += "\n";
     }
-    //printf("%s", out);
-    cout << out << endl;
+
+    // http://www.cplusplus.com/forum/general/4422/
+    char *a = new char[output.size()+1];
+    a[output.size()] = 0;
+    memcpy(a,output.c_str(), output.size());
+    printf("%s", a);
+    //cout << out << endl;
 }
 
