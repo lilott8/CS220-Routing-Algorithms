@@ -6,14 +6,15 @@
 using namespace std;
 
 int main() {
-    Maps map(10);
+    Maps *map = new Maps(5);
     Lee lee(map);
     lee.start_lee();
 
-    //delete lee;
+    map->print_map();
+    printf("=====================================\n");
+    lee.print_map();
 
-    map.print_map();
-    //cout << "Lee is: " << lee.get_lee() << endl;
+    delete(map);
 
     return 0;
 }
