@@ -8,8 +8,8 @@ using namespace std;
 
 int main() {
 
-    bool use_random = true;
-    bool use_debug = false;
+    bool use_random = false;
+    bool use_debug = true;
 
     if(use_random) {
         printf("Using random map\n");
@@ -32,7 +32,7 @@ int main() {
 
         lee.start_lee();
 
-        debug_map->print_map();
+        //debug_map->print_map();
 
         delete(debug_map);
     }

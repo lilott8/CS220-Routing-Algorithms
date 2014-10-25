@@ -20,10 +20,11 @@ public:
     // Variables
 private:
     // Methods
-    void run_lee(deque<Coordinates> *, int);
-    void print_trace_back();
+    void run_lee(deque<Coordinates> *, vector<Coordinates> *, int);
+    void print_trace_back(vector<Coordinates>);
     bool check_traversability(int, int);
     bool is_placeable(int, int);
+    bool is_adjacent(Coordinates, Coordinates);
     int calculate_distance(int, int);
     // Variables
     Maps *lee_map;
