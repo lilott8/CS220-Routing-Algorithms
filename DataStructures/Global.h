@@ -1,7 +1,5 @@
 #pragma once
 
-using namespace std;
-
 /**
 * @class
 * There might be a time to
@@ -9,12 +7,13 @@ using namespace std;
 * class, right now it is just an
 * easy way to move data between two classes
 */
-extern struct Coordinates {
+struct Coordinates {
     int x;
     int y;
+    int dist;
 };
 
-extern struct node {
+struct node {
     Coordinates coord;
     node *left;
     node *right;

@@ -10,11 +10,13 @@ public:
     Maps();
     Maps(int);
     // Methods
-    vector<vector<int> > get_map();
-    void set_difficulty(int);
-    void print_map();
+    vector<vector<int> > *get_map();
+    Maps &set_difficulty(int);
+    Maps &set_source(int, int);
+    Maps &set_sink(int, int);
     Coordinates get_source_coordinates();
     Coordinates get_sink_coordinates();
+    void print_map();
     // Variables
     static const int SOURCE_NUMBER = -1;
     static const int SINK_NUMBER = -2;

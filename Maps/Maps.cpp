@@ -8,12 +8,12 @@
 
 using namespace std;
 
-int difficulty;
+/**int difficulty;
 bool initialized = false;
 vector<vector <int> > map;
 
 Coordinates source_coordinates;
-Coordinates sink_coordinates;
+Coordinates sink_coordinates;**/
 
 Maps::Maps() {
     initialized = false;
@@ -26,16 +26,31 @@ Maps::Maps(int x) {
     initialized = true;
 }
 
-vector< vector<int> > Maps::get_map() {
-    return map;
+vector< vector<int> > *Maps::get_map() {
+    return &map;
 }
 
-void Maps::set_difficulty(int x) {
+Maps &Maps::set_difficulty(int x) {
     difficulty = x;
     if (!initialized) {
         initialize_map();
-        set_points();
+        initialized = true;
     }
+    return *this;
+}
+
+Maps &Maps::set_sink(int x, int y) {
+    map.at(x).at(y) = -2;
+    sink_coordinates.x = x;
+    sink_coordinates.y = y;
+    return *this;
+}
+
+Maps &Maps::set_source(int x, int y) {
+    map.at(x).at(y) = -1;
+    source_coordinates.x = x;
+    source_coordinates.y = y;
+    return *this;
 }
 
 Coordinates Maps::get_sink_coordinates() {
@@ -55,7 +70,6 @@ void Maps::initialize_map() {
         vector<int> v(difficulty,0);
         map.push_back(v);
     }
-    set_points();
 }
 
 /**
@@ -84,8 +98,8 @@ void Maps::set_points() {
 
     // set the values so our algorithm knows where
     // to start and end
-    map.at(startx).at(starty) = -1;
-    map.at(endx).at(endy) = -2;
+    map.at(startx).at(starty) = SOURCE_NUMBER;
+    map.at(endx).at(endy) = SINK_NUMBER;
 }
 
 void Maps::print_map() {
