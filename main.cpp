@@ -8,12 +8,12 @@ using namespace std;
 
 int main() {
 
-    bool use_random = false;
-    bool use_debug = true;
+    bool use_random = true;
+    bool use_debug = false;
 
     if(use_random) {
         printf("Using random map\n");
-        Maps *random_map = new Maps(5);
+        Maps *random_map = new Maps(10);
         Lee lee(random_map);
         lee.start_lee();
         lee.print_map();

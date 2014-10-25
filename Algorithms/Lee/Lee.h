@@ -15,17 +15,16 @@ public:
     Lee(Maps*);
     ~Lee();
     // Methods
-    void deprecated_start_lee();
     void start_lee();
     void print_map();
     // Variables
 private:
     // Methods
-    void deprecated_run_lee(deque<node*>, int);
     void run_lee(deque<Coordinates> *, int);
     void print_trace_back();
     bool check_traversability(int, int);
     bool is_placeable(int, int);
+    int calculate_distance(int, int);
     // Variables
     Maps *lee_map;
     Coordinates sink_coords;
