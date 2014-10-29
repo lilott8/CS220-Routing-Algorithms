@@ -55,7 +55,7 @@ void Lee::print_trace_back(vector<Coordinates> trace_back) {
     }
     char *a = new char[output.size()+1];
     memcpy(a,output.c_str(), output.size());
-    printf("++++++++++++++++++++\n%s\n++++++++++++++++++++\n", a);
+    printf("+++++++++++++++++++++\n%s\n+++++++++++++++++++++\n", a);
 }
 
 void Lee::start_lee() {
@@ -75,6 +75,9 @@ void Lee::start_lee() {
 
     run_lee(&wave_front, &trace_back, 0);
 
+    // this is sort of cheating...
+    lee_map->get_map()->at(sink_coords.x).at(sink_coords.y) = Maps::TRACE_BACK_NUMBER;
+
     print_trace_back(trace_back);
 }
 
@@ -91,13 +94,27 @@ bool Lee::is_placeable(int x, int y) {
     return true;
 }
 
-int Lee::calculate_distance(int x, int y) {
+int Lee::calculate_euclidean_distance(int x, int y) {
     // Source is always (x1, y1)
-    int order1, order2, result;
+    int order1, order2;
     order1 = (source_coords.x - x)*(source_coords.x - x);
     order2 = (source_coords.y - y)*(source_coords.y - y);
     // http://stackoverflow.com/questions/9695329/c-how-to-round-a-double-to-an-int
     return (int) (sqrt(order1 + order2) + .5);
+}
+
+int Lee::calculate_manhattan_distance(int x, int y) {
+    int order1, order2;
+    order1 = abs(x - source_coords.x);
+    order2 = abs(y - source_coords.y);
+    return order1 + order2;
+}
+
+int Lee::calculate_manhattan_distance(Coordinates curr, Coordinates prev) {
+    int order1, order2;
+    order1 = abs(curr.x - prev.x);
+    order2 = abs(curr.y - prev.y);
+    return order1 + order2;
 }
 
 
@@ -136,7 +153,7 @@ void Lee::run_lee(deque<Coordinates> *wave_front, vector<Coordinates> *trace_bac
     int y = curr.y;
     int d = curr.dist;
 
-    printf("***********\n");
+    printf("*********************\n");
     printf("Current coordinates: (%d, %d)\t Distance: %d\n", x, y, d);
 
     /**
@@ -146,7 +163,9 @@ void Lee::run_lee(deque<Coordinates> *wave_front, vector<Coordinates> *trace_bac
     if ((y + 1) < lee_map->get_map()->at(x).size() && is_placeable(x, y + 1)) {
         temp.x = x;
         temp.y = y + 1;
-        temp.dist = calculate_distance(temp.x, temp.y);
+        temp.dist = calculate_manhattan_distance(temp.x, temp.y);
+        //temp.dist = calculate_euclidean_distance(temp.x, temp.y);
+        //temp.dist = iteration;
         lee_map->get_map()->at(x).at(y + 1) = temp.dist;
         wave_front->push_back(temp);
         printf("Adding (x,y+1): (%d, %d)\n", x, y + 1);
@@ -155,7 +174,9 @@ void Lee::run_lee(deque<Coordinates> *wave_front, vector<Coordinates> *trace_bac
     if ((y - 1) >= 0 && is_placeable(x, y - 1)) {
         temp.x = x;
         temp.y = y - 1;
-        temp.dist = calculate_distance(temp.x, temp.y);
+        temp.dist = calculate_manhattan_distance(temp.x, temp.y);
+        //temp.dist = calculate_euclidean_distance(temp.x, temp.y);
+        //temp.dist = iteration;
         lee_map->get_map()->at(x).at(y - 1) = temp.dist;
         wave_front->push_back(temp);
         printf("Adding (x,y-1): (%d, %d)\n", x, y - 1);
@@ -164,7 +185,9 @@ void Lee::run_lee(deque<Coordinates> *wave_front, vector<Coordinates> *trace_bac
     if ((x + 1) < lee_map->get_map()->size() && is_placeable(x + 1, y)) {
         temp.x = x + 1;
         temp.y = y;
-        temp.dist = calculate_distance(temp.x, temp.y);
+        temp.dist = calculate_manhattan_distance(temp.x, temp.y);
+        //temp.dist = calculate_euclidean_distance(temp.x, temp.y);
+        //temp.dist = iteration;
         lee_map->get_map()->at(x + 1).at(y) = temp.dist;
         wave_front->push_back(temp);
         printf("Adding (x+1,y): (%d, %d)\n", x + 1, y);
@@ -173,7 +196,9 @@ void Lee::run_lee(deque<Coordinates> *wave_front, vector<Coordinates> *trace_bac
     if ((x - 1) >= 0 && is_placeable(x - 1, y)) {
         temp.x = x - 1;
         temp.y = y;
-        temp.dist = calculate_distance(temp.x, temp.y);
+        temp.dist = calculate_manhattan_distance(temp.x, temp.y);
+        //temp.dist = calculate_euclidean_distance(temp.x, temp.y);
+        //temp.dist = iteration;
         lee_map->get_map()->at(x - 1).at(y) = temp.dist;
         wave_front->push_back(temp);
         printf("Adding (x-1,y): (%d, %d)\n", x - 1, y);
@@ -186,18 +211,40 @@ void Lee::run_lee(deque<Coordinates> *wave_front, vector<Coordinates> *trace_bac
     // This is the last "portion" that needs to be fixed.
     // note: check to see if it is completely adjacent, not
     // just within one of distance.
-    if(trace_back->size() > 0 && curr.dist < trace_back->back().dist
+    if(trace_back->size() > 0 && curr.dist <= trace_back->back().dist
             && is_adjacent(curr, trace_back->back())) {
         trace_back->push_back(curr);
+        lee_map->get_map()->at(curr.x).at(curr.y) = Maps::TRACE_BACK_NUMBER;
     }
 }
 
 bool Lee::is_adjacent(Coordinates curr, Coordinates prev) {
-    int c1, c2, result;
-    c1 = (curr.x - prev.x)*(curr.x - prev.x);
-    c2 = (curr.y - prev.y)*(curr.y - prev.y);
-    result =  (int) (sqrt(c1 + c2) + .5);
-    printf("is (%d, %d) close to: (%d, %d), it is: %d away\n",
+    // If it's the source, add it!
+    if(curr.dist == 0) {
+        return true;
+    }
+    int euclidean_x, euclidean_y, delta_x, delta_y;
+    double result;
+    euclidean_x = (curr.x - prev.x)*(curr.x - prev.x);
+    euclidean_y = (curr.y - prev.y)*(curr.y - prev.y);
+    // By using euclidean distance we can jump diagonally...
+    // which isn't ok.
+    result = sqrt(euclidean_x + euclidean_y);
+    result = calculate_manhattan_distance(curr, prev);
+
+    printf("is Current(%d, %d) close to Previous(%d, %d), it is: %f away\n",
             curr.x, curr.y, prev.x, prev.y, result);
-    return result == 1;
+    // Calculate the deltas between x and y,
+    // this will prevent the diagonal jumping
+    delta_x = abs(curr.x - prev.x);
+    delta_y = abs(curr.y - prev.y);
+    // Just for debugging!
+    if((delta_x == 0 && delta_y == 1) || (delta_x == 1 && delta_y == 0)) {
+        printf("Delta_x: %d, Delta_y: %d\n", delta_x, delta_y);
+    } else {
+        printf("it's greater than one!\n");
+    }
+    printf("---------------------\n");
+    // make sure the result is 1 or less and the delta on x or y is 1
+    return result <= 1.0 && (delta_x == 1 || delta_y == 1);
 }

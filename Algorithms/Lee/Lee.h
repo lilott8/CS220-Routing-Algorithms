@@ -25,7 +25,9 @@ private:
     bool check_traversability(int, int);
     bool is_placeable(int, int);
     bool is_adjacent(Coordinates, Coordinates);
-    int calculate_distance(int, int);
+    int calculate_euclidean_distance(int, int);
+    int calculate_manhattan_distance(int, int);
+    int calculate_manhattan_distance(Coordinates, Coordinates);
     // Variables
     Maps *lee_map;
     Coordinates sink_coords;

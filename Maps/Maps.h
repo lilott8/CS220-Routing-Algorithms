@@ -21,6 +21,7 @@ public:
     static const int SOURCE_NUMBER = -1;
     static const int SINK_NUMBER = -2;
     static const int UNTRAVERSABLE_NUMBER = -3;
+    static const int TRACE_BACK_NUMBER = -4;
 private:
     // Methods
     void initialize_map();
