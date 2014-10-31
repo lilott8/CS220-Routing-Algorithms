@@ -147,6 +147,90 @@ bool Lee::is_adjacent(Coordinates curr, Coordinates prev) {
     return result <= 1.0 && (delta_x == 1 || delta_y == 1);
 }
 
+void Lee::calculate_next_move(deque<Coordinates> *wave_front, int x, int y) {
+    Coordinates temp;
+    // (x, y+1)
+    if (is_placeable(x, y + 1)) {
+        temp.x = x;
+        temp.y = y + 1;
+        switch (type) {
+            case LEE:
+                temp.dist = calculate_manhattan_distance(temp.x, temp.y);
+                break;
+            case LEE_3_BIT:
+                temp.dist = (calculate_manhattan_distance(temp.x, temp.y) % 3) == 0
+                        ? 3 : (calculate_manhattan_distance(temp.x, temp.y) % 3);
+                break;
+            case LEE_2_BIT:
+                // Nothing yet
+                break;
+        }
+        lee_map->get_map()->at(x).at(y + 1) = temp.dist;
+        wave_front->push_back(temp);
+        printf("Adding (x,y+1): (%d, %d)\n", x, y + 1);
+    }
+    // (x, y-1)
+    if (is_placeable(x, y - 1)) {
+        temp.x = x;
+        temp.y = y - 1;
+        switch (type) {
+            case LEE:
+                temp.dist = calculate_manhattan_distance(temp.x, temp.y);
+                break;
+            case LEE_3_BIT:
+                temp.dist = (calculate_manhattan_distance(temp.x, temp.y) % 3) == 0
+                        ? 3 : (calculate_manhattan_distance(temp.x, temp.y) % 3);
+                break;
+            case LEE_2_BIT:
+                // Nothing yet
+                break;
+        }
+        lee_map->get_map()->at(x).at(y - 1) = temp.dist;
+        wave_front->push_back(temp);
+        printf("Adding (x,y-1): (%d, %d)\n", x, y - 1);
+    }
+    // (x+1, y)
+    if (is_placeable(x + 1, y)) {
+        temp.x = x + 1;
+        temp.y = y;
+        switch (type) {
+            case LEE:
+                temp.dist = calculate_manhattan_distance(temp.x, temp.y);
+                break;
+            case LEE_3_BIT:
+                temp.dist = (calculate_manhattan_distance(temp.x, temp.y) % 3) == 0
+                        ? 3 : (calculate_manhattan_distance(temp.x, temp.y) % 3);
+                break;
+            case LEE_2_BIT:
+                // Nothing yet
+                break;
+        }
+        lee_map->get_map()->at(x + 1).at(y) = temp.dist;
+        wave_front->push_back(temp);
+        printf("Adding (x+1,y): (%d, %d)\n", x + 1, y);
+    }
+    // (x-1, y)
+    if (is_placeable(x - 1, y)) {
+        temp.x = x - 1;
+        temp.y = y;
+        switch (type) {
+            case LEE:
+                temp.dist = calculate_manhattan_distance(temp.x, temp.y);
+                break;
+            case LEE_3_BIT:
+                temp.dist = (calculate_manhattan_distance(temp.x, temp.y) % 3) == 0
+                        ? 3 : (calculate_manhattan_distance(temp.x, temp.y) % 3);
+                break;
+            case LEE_2_BIT:
+                // Nothing yet
+                break;
+        }
+        lee_map->get_map()->at(x - 1).at(y) = temp.dist;
+        wave_front->push_back(temp);
+        printf("Adding (x-1,y): (%d, %d)\n", x - 1, y);
+    }
+}
+
 void Lee::start_lee() {
     deque<Coordinates> wave_front;
     vector<Coordinates> trace_back;
@@ -214,53 +298,13 @@ void Lee::run_2_bit_lee(deque<Coordinates> *wave_front, vector<Coordinates> *tra
     }
 
     // Case 3: We still have places on the map to visit
-    // This is just for ease of typing
-    int x = curr.x;
-    int y = curr.y;
-    int d = curr.dist;
-
     printf("*********************\n");
-    //printf("Current coordinates: (%d, %d)\t Distance: %d\n", x, y, d);
+    //printf("Current coordinates: (%d, %d)\t Distance: %d\n", curr.x, curr.y, curr.dist);
 
     /**
     * Check each possibility of the next wavefront
     */
-    // (x, y+1)
-    if (is_placeable(x, y + 1)) {
-        temp.x = x;
-        temp.y = y + 1;
-        temp.dist = (calculate_manhattan_distance(temp.x, temp.y) % 2) == 0 ? 2 : (calculate_manhattan_distance(temp.x, temp.y) % 2);
-        lee_map->get_map()->at(x).at(y + 1) = temp.dist;
-        wave_front->push_back(temp);
-        printf("Adding (x,y+1): (%d, %d)\n", x, y + 1);
-    }
-    // (x, y-1)
-    if (is_placeable(x, y - 1)) {
-        temp.x = x;
-        temp.y = y - 1;
-        temp.dist = (calculate_manhattan_distance(temp.x, temp.y) % 2) == 0 ? 2 : (calculate_manhattan_distance(temp.x, temp.y) % 2);
-        lee_map->get_map()->at(x).at(y - 1) = temp.dist;
-        wave_front->push_back(temp);
-        printf("Adding (x,y-1): (%d, %d)\n", x, y - 1);
-    }
-    // (x+1, y)
-    if (is_placeable(x + 1, y)) {
-        temp.x = x + 1;
-        temp.y = y;
-        temp.dist = (calculate_manhattan_distance(temp.x, temp.y) % 2) == 0 ? 2 : (calculate_manhattan_distance(temp.x, temp.y) % 2);
-        lee_map->get_map()->at(x + 1).at(y) = temp.dist;
-        wave_front->push_back(temp);
-        printf("Adding (x+1,y): (%d, %d)\n", x + 1, y);
-    }
-    // (x-1, y)
-    if (is_placeable(x - 1, y)) {
-        temp.x = x - 1;
-        temp.y = y;
-        temp.dist = (calculate_manhattan_distance(temp.x, temp.y) % 2) == 0 ? 2 : (calculate_manhattan_distance(temp.x, temp.y) % 2);
-        lee_map->get_map()->at(x - 1).at(y) = temp.dist;
-        wave_front->push_back(temp);
-        printf("Adding (x-1,y): (%d, %d)\n", x - 1, y);
-    }
+    calculate_next_move(wave_front, curr.x, curr.y);
     print_map();
     printf("=====================\n\n");
 
@@ -306,53 +350,13 @@ void Lee::run_3_bit_lee(deque<Coordinates> *wave_front, vector<Coordinates> *tra
     }
 
     // Case 3: We still have places on the map to visit
-    // This is just for ease of typing
-    int x = curr.x;
-    int y = curr.y;
-    int d = curr.dist;
-
     printf("*********************\n");
-    //printf("Current coordinates: (%d, %d)\t Distance: %d\n", x, y, d);
+    printf("Current coordinates: (%d, %d)\t Distance: %d\n", curr.x, curr.y, curr.dist);
 
     /**
     * Check each possibility of the next wavefront
     */
-    // (x, y+1)
-    if (is_placeable(x, y + 1)) {
-        temp.x = x;
-        temp.y = y + 1;
-        temp.dist = (calculate_manhattan_distance(temp.x, temp.y) % 3) == 0 ? 3 : (calculate_manhattan_distance(temp.x, temp.y) % 3);
-        lee_map->get_map()->at(x).at(y + 1) = temp.dist;
-        wave_front->push_back(temp);
-        printf("Adding (x,y+1): (%d, %d) Distance: %d\n", x, y + 1, temp.dist);
-    }
-    // (x, y-1)
-    if (is_placeable(x, y - 1)) {
-        temp.x = x;
-        temp.y = y - 1;
-        temp.dist = (calculate_manhattan_distance(temp.x, temp.y) % 3) == 0 ? 3 : (calculate_manhattan_distance(temp.x, temp.y) % 3);
-        lee_map->get_map()->at(x).at(y - 1) = temp.dist;
-        wave_front->push_back(temp);
-        printf("Adding (x,y+1): (%d, %d) Distance: %d\n", x, y + 1, temp.dist);
-    }
-    // (x+1, y)
-    if (is_placeable(x + 1, y)) {
-        temp.x = x + 1;
-        temp.y = y;
-        temp.dist = (calculate_manhattan_distance(temp.x, temp.y) % 3) == 0 ? 3 : (calculate_manhattan_distance(temp.x, temp.y) % 3);
-        lee_map->get_map()->at(x + 1).at(y) = temp.dist;
-        wave_front->push_back(temp);
-        printf("Adding (x,y+1): (%d, %d) Distance: %d\n", x, y + 1, temp.dist);
-    }
-    // (x-1, y)
-    if (is_placeable(x - 1, y)) {
-        temp.x = x - 1;
-        temp.y = y;
-        temp.dist = (calculate_manhattan_distance(temp.x, temp.y) % 3) == 0 ? 3 : (calculate_manhattan_distance(temp.x, temp.y) % 3);
-        lee_map->get_map()->at(x - 1).at(y) = temp.dist;
-        wave_front->push_back(temp);
-        printf("Adding (x,y+1): (%d, %d) Distance: %d\n", x, y + 1, temp.dist);
-    }
+    calculate_next_move(wave_front, curr.x, curr.y);
     print_map();
     printf("=====================\n\n");
 
@@ -406,53 +410,13 @@ void Lee::run_original_lee(deque<Coordinates> *wave_front, vector<Coordinates> *
     }
 
     // Case 3: We still have places on the map to visit
-    // This is just for ease of typing
-    int x = curr.x;
-    int y = curr.y;
-    int d = curr.dist;
-
     printf("*********************\n");
-    printf("Current coordinates: (%d, %d)\t Distance: %d\n", x, y, d);
+    printf("Current coordinates: (%d, %d)\t Distance: %d\n", curr.x, curr.y, curr.dist);
 
     /**
     * Check each possibility of the next wavefront
     */
-    // (x, y+1)
-    if (is_placeable(x, y + 1)) {
-        temp.x = x;
-        temp.y = y + 1;
-        temp.dist = calculate_manhattan_distance(temp.x, temp.y);
-        lee_map->get_map()->at(x).at(y + 1) = temp.dist;
-        wave_front->push_back(temp);
-        printf("Adding (x,y+1): (%d, %d)\n", x, y + 1);
-    }
-    // (x, y-1)
-    if (is_placeable(x, y - 1)) {
-        temp.x = x;
-        temp.y = y - 1;
-        temp.dist = calculate_manhattan_distance(temp.x, temp.y);
-        lee_map->get_map()->at(x).at(y - 1) = temp.dist;
-        wave_front->push_back(temp);
-        printf("Adding (x,y-1): (%d, %d)\n", x, y - 1);
-    }
-    // (x+1, y)
-    if (is_placeable(x + 1, y)) {
-        temp.x = x + 1;
-        temp.y = y;
-        temp.dist = calculate_manhattan_distance(temp.x, temp.y);
-        lee_map->get_map()->at(x + 1).at(y) = temp.dist;
-        wave_front->push_back(temp);
-        printf("Adding (x+1,y): (%d, %d)\n", x + 1, y);
-    }
-    // (x-1, y)
-    if (is_placeable(x - 1, y)) {
-        temp.x = x - 1;
-        temp.y = y;
-        temp.dist = calculate_manhattan_distance(temp.x, temp.y);
-        lee_map->get_map()->at(x - 1).at(y) = temp.dist;
-        wave_front->push_back(temp);
-        printf("Adding (x-1,y): (%d, %d)\n", x - 1, y);
-    }
+    calculate_next_move(wave_front, curr.x, curr.y);
     print_map();
     printf("=====================\n\n");
 

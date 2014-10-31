@@ -11,7 +11,7 @@ int main() {
     if(use_random) {
         printf("Using random map\n");
         Maps *random_map = new Maps(10);
-        Lee lee(random_map, Lee::LEE_3_BIT);
+        Lee lee(random_map, Lee::LEE);
         lee.start_lee();
         lee.print_map();
         delete(random_map);

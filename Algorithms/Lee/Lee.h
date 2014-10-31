@@ -31,6 +31,8 @@ private:
 
     void run_3_bit_lee(deque<Coordinates> *, vector<Coordinates> *, int);
     void print_trace_back(vector<Coordinates>);
+
+    void calculate_next_move(deque<Coordinates> *, int, int);
     bool check_traversability(int, int);
     bool is_placeable(int, int);
     bool is_adjacent(Coordinates, Coordinates);
