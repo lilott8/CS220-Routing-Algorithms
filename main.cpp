@@ -5,8 +5,8 @@ using namespace std;
 
 int main() {
 
-    bool use_random = true;
-    bool use_debug = false;
+    bool use_random = false;
+    bool use_debug = true;
 
     if(use_random) {
         printf("Using random map\n");
@@ -25,7 +25,7 @@ int main() {
                 .set_sink(0, 4)
                 .set_source(2, 2);
 
-        Lee lee(debug_map, Lee::LEE_3_BIT);
+        Lee lee(debug_map, Lee::LEE_2_BIT);
 
         lee.start_lee();
 

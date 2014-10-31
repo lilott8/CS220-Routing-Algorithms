@@ -171,14 +171,102 @@ void Lee::start_lee() {
     lee_map->get_map()->at(sink_coords.x).at(sink_coords.y) = Maps::kTraceback;
 
     // Clean the map to make it look nicer
-    lee_map->zero_out_map();
+    //lee_map->zero_out_map();
 
     // print our solution!
     print_trace_back(trace_back);
 }
 
 void Lee::run_2_bit_lee(deque<Coordinates> *wave_front, vector<Coordinates> *trace_back, int iteration) {
+    printf("We are on iteration: %d\n", iteration);
+    printf("Sink's coordinates are: (%d, %d)\n", sink_coords.x, sink_coords.y);
 
+    // Base case 1: Not finding a solution
+    printf("size of queue: %lu\n", wave_front->size());
+    if (wave_front->size() < 1) {
+        printf("We have nothing in our queue\n");
+        printf("=====================\n\n");
+        return;
+    }
+
+    // Grab the first record
+    Coordinates curr = wave_front->front();
+    // pop off the first record
+    wave_front->pop_front();
+    // create a single holder var for our new coordinates
+    Coordinates temp;
+
+    // Base case 2: We found the sink
+    if (curr.x == sink_coords.x && curr.y == sink_coords.y) {
+        printf("We found: (%d, %d) in %d moves\n",
+                sink_coords.x, sink_coords.y, (int) floor(iteration / 4) - 1);
+        printf("=====================\n\n");
+        // add the sink to the trace_back
+        trace_back->push_back(curr);
+        return;
+    }
+
+    // Case 3: We still have places on the map to visit
+    // This is just for ease of typing
+    int x = curr.x;
+    int y = curr.y;
+    int d = curr.dist;
+
+    printf("*********************\n");
+    //printf("Current coordinates: (%d, %d)\t Distance: %d\n", x, y, d);
+
+    /**
+    * Check each possibility of the next wavefront
+    */
+    // (x, y+1)
+    if ((y + 1) < lee_map->get_map()->at(x).size() && is_placeable(x, y + 1)) {
+        temp.x = x;
+        temp.y = y + 1;
+        temp.dist = (calculate_manhattan_distance(temp.x, temp.y) % 2) == 0 ? 2 : (calculate_manhattan_distance(temp.x, temp.y) % 2);
+        lee_map->get_map()->at(x).at(y + 1) = temp.dist;
+        wave_front->push_back(temp);
+        printf("Adding (x,y+1): (%d, %d)\n", x, y + 1);
+    }
+    // (x, y-1)
+    if ((y - 1) >= 0 && is_placeable(x, y - 1)) {
+        temp.x = x;
+        temp.y = y - 1;
+        temp.dist = (calculate_manhattan_distance(temp.x, temp.y) % 2) == 0 ? 2 : (calculate_manhattan_distance(temp.x, temp.y) % 2);
+        lee_map->get_map()->at(x).at(y - 1) = temp.dist;
+        wave_front->push_back(temp);
+        printf("Adding (x,y-1): (%d, %d)\n", x, y - 1);
+    }
+    // (x+1, y)
+    if ((x + 1) < lee_map->get_map()->size() && is_placeable(x + 1, y)) {
+        temp.x = x + 1;
+        temp.y = y;
+        temp.dist = (calculate_manhattan_distance(temp.x, temp.y) % 2) == 0 ? 2 : (calculate_manhattan_distance(temp.x, temp.y) % 2);
+        lee_map->get_map()->at(x + 1).at(y) = temp.dist;
+        wave_front->push_back(temp);
+        printf("Adding (x+1,y): (%d, %d)\n", x + 1, y);
+    }
+    // (x-1, y)
+    if ((x - 1) >= 0 && is_placeable(x - 1, y)) {
+        temp.x = x - 1;
+        temp.y = y;
+        temp.dist = (calculate_manhattan_distance(temp.x, temp.y) % 2) == 0 ? 2 : (calculate_manhattan_distance(temp.x, temp.y) % 2);
+        lee_map->get_map()->at(x - 1).at(y) = temp.dist;
+        wave_front->push_back(temp);
+        printf("Adding (x-1,y): (%d, %d)\n", x - 1, y);
+    }
+    print_map();
+    printf("=====================\n\n");
+
+    run_2_bit_lee(wave_front, trace_back, iteration + 1);
+
+    // This is the last "portion" that needs to be fixed.
+    // note: check to see if it is completely adjacent, not
+    // just within one of distance.
+    if (trace_back->size() > 0 && curr.dist <= trace_back->back().dist
+            && is_adjacent(curr, trace_back->back())) {
+        //trace_back->push_back(curr);
+        //lee_map->get_map()->at(curr.x).at(curr.y) = Maps::kTraceback;
+    }
 }
 
 void Lee::run_3_bit_lee(deque<Coordinates> *wave_front, vector<Coordinates> *trace_back, int iteration) {
@@ -327,8 +415,6 @@ void Lee::run_original_lee(deque<Coordinates> *wave_front, vector<Coordinates> *
         temp.x = x;
         temp.y = y + 1;
         temp.dist = calculate_manhattan_distance(temp.x, temp.y);
-        //temp.dist = calculate_euclidean_distance(temp.x, temp.y);
-        //temp.dist = iteration;
         lee_map->get_map()->at(x).at(y + 1) = temp.dist;
         wave_front->push_back(temp);
         printf("Adding (x,y+1): (%d, %d)\n", x, y + 1);
@@ -338,8 +424,6 @@ void Lee::run_original_lee(deque<Coordinates> *wave_front, vector<Coordinates> *
         temp.x = x;
         temp.y = y - 1;
         temp.dist = calculate_manhattan_distance(temp.x, temp.y);
-        //temp.dist = calculate_euclidean_distance(temp.x, temp.y);
-        //temp.dist = iteration;
         lee_map->get_map()->at(x).at(y - 1) = temp.dist;
         wave_front->push_back(temp);
         printf("Adding (x,y-1): (%d, %d)\n", x, y - 1);
@@ -349,8 +433,6 @@ void Lee::run_original_lee(deque<Coordinates> *wave_front, vector<Coordinates> *
         temp.x = x + 1;
         temp.y = y;
         temp.dist = calculate_manhattan_distance(temp.x, temp.y);
-        //temp.dist = calculate_euclidean_distance(temp.x, temp.y);
-        //temp.dist = iteration;
         lee_map->get_map()->at(x + 1).at(y) = temp.dist;
         wave_front->push_back(temp);
         printf("Adding (x+1,y): (%d, %d)\n", x + 1, y);
@@ -360,8 +442,6 @@ void Lee::run_original_lee(deque<Coordinates> *wave_front, vector<Coordinates> *
         temp.x = x - 1;
         temp.y = y;
         temp.dist = calculate_manhattan_distance(temp.x, temp.y);
-        //temp.dist = calculate_euclidean_distance(temp.x, temp.y);
-        //temp.dist = iteration;
         lee_map->get_map()->at(x - 1).at(y) = temp.dist;
         wave_front->push_back(temp);
         printf("Adding (x-1,y): (%d, %d)\n", x - 1, y);
@@ -371,9 +451,7 @@ void Lee::run_original_lee(deque<Coordinates> *wave_front, vector<Coordinates> *
 
     run_original_lee(wave_front, trace_back, iteration + 1);
 
-    // This is the last "portion" that needs to be fixed.
-    // note: check to see if it is completely adjacent, not
-    // just within one of distance.
+    // Start the trace_back!
     if(trace_back->size() > 0 && curr.dist <= trace_back->back().dist
             && is_adjacent(curr, trace_back->back())) {
         trace_back->push_back(curr);
