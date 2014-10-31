@@ -17,11 +17,14 @@ public:
     Coordinates get_source_coordinates();
     Coordinates get_sink_coordinates();
     void print_map();
+
+    void zero_out_map();
     // Variables
-    static const int SOURCE_NUMBER = -1;
-    static const int SINK_NUMBER = -2;
-    static const int UNTRAVERSABLE_NUMBER = -3;
-    static const int TRACE_BACK_NUMBER = -4;
+    //static const typedef enum Labels {Empty, Blocked, L1, L2, L3} LabelType;
+    static const int kSource = -1;
+    static const int kSink = -2;
+    static const int kUntraversable = -3;
+    static const int kTraceback = -4;
 private:
     // Methods
     void initialize_map();

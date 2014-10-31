@@ -4,7 +4,6 @@
 #include <ostream>
 #include <iostream>
 #include "Maps.h"
-#include "../DataStructures/Global.h"
 
 using namespace std;
 
@@ -61,6 +60,21 @@ Coordinates Maps::get_source_coordinates() {
     return source_coordinates;
 };
 
+void Maps::zero_out_map() {
+    int place = 0;
+    for (int x = 0; x < map.size(); x++) {
+        for (int y = 0; y < map.at(x).size(); y++) {
+            place = map.at(x).at(y);
+            if (place != Maps::kTraceback &&
+                    place != Maps::kUntraversable &&
+                    place != Maps::kSink &&
+                    place != Maps::kSource) {
+                map.at(x).at(y) = 0;
+            }
+        }
+    }
+}
+
 /**
 * @method:
 *   Init the map vector
@@ -98,8 +112,8 @@ void Maps::set_points() {
 
     // set the values so our algorithm knows where
     // to start and end
-    map.at(startx).at(starty) = SOURCE_NUMBER;
-    map.at(endx).at(endy) = SINK_NUMBER;
+    map.at(startx).at(starty) = Maps::kSource;
+    map.at(endx).at(endy) = Maps::kSink;
 }
 
 void Maps::print_map() {
