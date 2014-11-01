@@ -56,6 +56,21 @@ void Lee::print_map() {
     //cout << out << endl;
 }
 
+void Lee::print_queue(deque<Coordinates> *wave_front) {
+    string output = "";
+    int x = 0;
+    for (int x = 0; x < wave_front->size(); x++) {
+        output += "Record " + to_string(x)
+                + ": (" + to_string(wave_front->at(x).x) + ", "
+                + to_string(wave_front->at(x).y) + ")\t Distance: "
+                + to_string(wave_front->at(x).dist) + "\n";
+        x++;
+    }
+    char *a = new char[output.size() + 1];
+    memcpy(a, output.c_str(), output.size());
+    printf("+++++++++++++++++++++\n%s\n+++++++++++++++++++++\n", a);
+}
+
 void Lee::print_trace_back(vector<Coordinates> trace_back) {
     string output = "";
     int x = 0;
@@ -96,6 +111,10 @@ bool Lee::is_placeable(int x, int y) {
 
 bool Lee::is_sink(Coordinates c) {
     return (c.x == sink_coords.x) && (c.y == sink_coords.y);
+}
+
+bool Lee::is_source(Coordinates c) {
+    return (c.x == source_coords.x) && (c.y == source_coords.y);
 }
 
 int Lee::calculate_euclidean_distance(int x, int y) {
@@ -162,7 +181,7 @@ void Lee::calculate_next_move(deque<Coordinates> *wave_front, int x, int y) {
                         ? 3 : (calculate_manhattan_distance(temp.x, temp.y) % 3);
                 break;
             case LEE_2_BIT:
-                // Nothing yet
+                // check x, x-1, y, y-1
                 break;
         }
         lee_map->get_map()->at(x).at(y + 1) = temp.dist;
@@ -182,7 +201,7 @@ void Lee::calculate_next_move(deque<Coordinates> *wave_front, int x, int y) {
                         ? 3 : (calculate_manhattan_distance(temp.x, temp.y) % 3);
                 break;
             case LEE_2_BIT:
-                // Nothing yet
+                // check x, x-1, y, y+1
                 break;
         }
         lee_map->get_map()->at(x).at(y - 1) = temp.dist;
@@ -202,7 +221,7 @@ void Lee::calculate_next_move(deque<Coordinates> *wave_front, int x, int y) {
                         ? 3 : (calculate_manhattan_distance(temp.x, temp.y) % 3);
                 break;
             case LEE_2_BIT:
-                // Nothing yet
+                // check x, x-1, y, y-1
                 break;
         }
         lee_map->get_map()->at(x + 1).at(y) = temp.dist;
@@ -222,7 +241,6 @@ void Lee::calculate_next_move(deque<Coordinates> *wave_front, int x, int y) {
                         ? 3 : (calculate_manhattan_distance(temp.x, temp.y) % 3);
                 break;
             case LEE_2_BIT:
-                // Nothing yet
                 break;
         }
         lee_map->get_map()->at(x - 1).at(y) = temp.dist;
@@ -230,6 +248,151 @@ void Lee::calculate_next_move(deque<Coordinates> *wave_front, int x, int y) {
         printf("Adding (x-1,y): (%d, %d)\n", x - 1, y);
     }
 }
+
+int Lee::get_bit_assignment(Coordinates curr) {
+    // this gives us our direction
+    int x = source_coords.x - curr.x;
+    int y = source_coords.y - curr.y;
+    int ones, twos = 0;
+    int answer = 0;
+
+    printf("Sources Coordinates: %d, %d\n", source_coords.x, source_coords.y);
+    printf("Current Coordinates: %d, %d, dist: %d\n", curr.x, curr.y, curr.dist);
+    printf("General form of slope: %d, %d\n", x, y);
+
+    // Work the sliding window for determining our 2-bitness
+    // top left corner
+    if (x > 0 && y > 0) {
+        lee_map->get_map()->at(curr.x).at(curr.y++) <= 1 ? ones++ : twos++;
+        lee_map->get_map()->at(curr.x++).at(curr.y) <= 1 ? ones++ : twos++;
+        lee_map->get_map()->at(curr.x++).at(curr.y++) <= 1 ? ones++ : twos++;
+        printf("TL Ones: %d\t Twos: %d\n", ones, twos);
+        (twos >= ones) ? answer = 1 : answer = 2;
+    }
+        // bottom right corner
+    else if (x < 0 && y < 0) {
+        lee_map->get_map()->at(curr.x).at(curr.y--) <= 1 ? ones++ : twos++;
+        lee_map->get_map()->at(curr.x--).at(curr.y) <= 1 ? ones++ : twos++;
+        lee_map->get_map()->at(curr.x--).at(curr.y--) <= 1 ? ones++ : twos++;
+        printf("BR Ones: %d\t Twos: %d\n", ones, twos);
+        (twos >= ones) ? answer = 1 : answer = 2;
+    }
+        // bottom left corner
+    else if (x > 0 && y < 0) {
+        lee_map->get_map()->at(curr.x).at(curr.y--) <= 1 ? ones++ : twos++;
+        lee_map->get_map()->at(curr.x++).at(curr.y) <= 1 ? ones++ : twos++;
+        lee_map->get_map()->at(curr.x++).at(curr.y--) <= 1 ? ones++ : twos++;
+        printf("BL Ones: %d\t Twos: %d\n", ones, twos);
+        (twos >= ones) ? answer = 1 : answer = 2;
+    }
+        // top right corner
+    else if (x < 0 && y > 0) {
+        lee_map->get_map()->at(curr.x).at(curr.y++) <= 1 ? ones++ : twos++;
+        lee_map->get_map()->at(curr.x--).at(curr.y) <= 1 ? ones++ : twos++;
+        lee_map->get_map()->at(curr.x--).at(curr.y++) <= 1 ? ones++ : twos++;
+        printf("TR Ones: %d\t Twos: %d\n", ones, twos);
+        (twos >= ones) ? answer = 1 : answer = 2;
+    }
+    printf("Returning with an answer of: %d\n", answer);
+    return answer;
+}
+
+void Lee::calculate_next_move_2_bit(deque<Coordinates> *wave_front, Coordinates curr) {
+    Coordinates temp;
+
+    // we do it this way because this is default case
+    if (!is_source(curr)) {
+        if (is_placeable(curr.x + 1, curr.y)) {
+            temp.x = curr.x + 1;
+            temp.y = curr.y;
+            temp.dist = get_bit_assignment(curr);
+            wave_front->push_back(temp);
+            lee_map->get_map()->at(temp.x).at(temp.y) = temp.dist;
+        }
+        if (is_placeable(curr.x - 1, curr.y)) {
+            temp.x = curr.x - 1;
+            temp.y = curr.y;
+            temp.dist = get_bit_assignment(curr);
+            wave_front->push_back(temp);
+            lee_map->get_map()->at(temp.x).at(temp.y) = temp.dist;
+        }
+        if (is_placeable(curr.x, curr.y + 1)) {
+            temp.x = curr.x;
+            temp.y = curr.y + 1;
+            temp.dist = get_bit_assignment(curr);
+            wave_front->push_back(temp);
+            lee_map->get_map()->at(temp.x).at(temp.y) = temp.dist;
+        }
+        if (is_placeable(curr.x, curr.y - 1)) {
+            temp.x = curr.x;
+            temp.y = curr.y - 1;
+            temp.dist = get_bit_assignment(curr);
+            wave_front->push_back(temp);
+            lee_map->get_map()->at(temp.x).at(temp.y) = temp.dist;
+        }
+
+        // else !is_source(curr))
+    } else {
+        if (is_placeable(curr.x + 1, curr.y)) {
+            temp.x = curr.x + 1;
+            temp.y = curr.y;
+            temp.dist = 1;
+            wave_front->push_back(temp);
+            lee_map->get_map()->at(temp.x).at(temp.y) = temp.dist;
+        }
+        if (is_placeable(curr.x - 1, curr.y)) {
+            temp.x = curr.x - 1;
+            temp.y = curr.y;
+            temp.dist = 1;
+            wave_front->push_back(temp);
+            lee_map->get_map()->at(temp.x).at(temp.y) = temp.dist;
+        }
+        if (is_placeable(curr.x, curr.y + 1)) {
+            temp.x = curr.x;
+            temp.y = curr.y + 1;
+            temp.dist = 1;
+            wave_front->push_back(temp);
+            lee_map->get_map()->at(temp.x).at(temp.y) = temp.dist;
+        }
+        if (is_placeable(curr.x, curr.y - 1)) {
+            temp.x = curr.x;
+            temp.y = curr.y - 1;
+            temp.dist = 1;
+            wave_front->push_back(temp);
+            lee_map->get_map()->at(temp.x).at(temp.y) = temp.dist;
+        }
+        // Grab the diagonals in this case.
+        if (is_placeable(curr.x + 1, curr.y + 1)) {
+            temp.x = curr.x + 1;
+            temp.y = curr.y + 1;
+            temp.dist = 1;
+            wave_front->push_back(temp);
+            lee_map->get_map()->at(temp.x).at(temp.y) = temp.dist;
+        }
+        if (is_placeable(curr.x - 1, curr.y - 1)) {
+            temp.x = curr.x - 1;
+            temp.y = curr.y - 1;
+            temp.dist = 1;
+            wave_front->push_back(temp);
+            lee_map->get_map()->at(temp.x).at(temp.y) = temp.dist;
+        }
+        if (is_placeable(curr.x - 1, curr.y + 1)) {
+            temp.x = curr.x - 1;
+            temp.y = curr.y + 1;
+            temp.dist = 1;
+            wave_front->push_back(temp);
+            lee_map->get_map()->at(temp.x).at(temp.y) = temp.dist;
+        }
+        if (is_placeable(curr.x + 1, curr.y - 1)) {
+            temp.x = curr.x + 1;
+            temp.y = curr.y - 1;
+            temp.dist = 1;
+            wave_front->push_back(temp);
+            lee_map->get_map()->at(temp.x).at(temp.y) = temp.dist;
+        }
+    }
+}
+
 
 void Lee::start_lee() {
     deque<Coordinates> wave_front;
@@ -269,11 +432,13 @@ void Lee::start_lee() {
 }
 
 void Lee::run_2_bit_lee(deque<Coordinates> *wave_front, vector<Coordinates> *trace_back, int iteration) {
+    printf("//\\\\//\\\\//\\\\//\\\\//\\\\/\n");
     printf("We are on iteration: %d\n", iteration);
-    printf("Sink's coordinates are: (%d, %d)\n", sink_coords.x, sink_coords.y);
+    //printf("Sink's coordinates are: (%d, %d)\n", sink_coords.x, sink_coords.y);
 
     // Base case 1: Not finding a solution
     printf("size of queue: %lu\n", wave_front->size());
+    print_queue(wave_front);
     if (wave_front->size() < 1) {
         printf("We have nothing in our queue\n");
         printf("=====================\n\n");
@@ -284,11 +449,9 @@ void Lee::run_2_bit_lee(deque<Coordinates> *wave_front, vector<Coordinates> *tra
     Coordinates curr = wave_front->front();
     // pop off the first record
     wave_front->pop_front();
-    // create a single holder var for our new coordinates
-    Coordinates temp;
 
     // Base case 2: We found the sink
-    if (curr.x == sink_coords.x && curr.y == sink_coords.y) {
+    if (is_sink(curr)) {
         printf("We found: (%d, %d) in %d moves\n",
                 sink_coords.x, sink_coords.y, (int) floor(iteration / 4) - 1);
         printf("=====================\n\n");
@@ -298,15 +461,16 @@ void Lee::run_2_bit_lee(deque<Coordinates> *wave_front, vector<Coordinates> *tra
     }
 
     // Case 3: We still have places on the map to visit
-    printf("*********************\n");
     //printf("Current coordinates: (%d, %d)\t Distance: %d\n", curr.x, curr.y, curr.dist);
 
     /**
     * Check each possibility of the next wavefront
     */
-    calculate_next_move(wave_front, curr.x, curr.y);
+    printf("*********************\n");
+    calculate_next_move_2_bit(wave_front, curr);
+    printf("*********************\n");
     print_map();
-    printf("=====================\n\n");
+    printf("//\\\\//\\\\//\\\\//\\\\//\\\\/\n\n");
 
     run_2_bit_lee(wave_front, trace_back, iteration + 1);
 
@@ -336,11 +500,9 @@ void Lee::run_3_bit_lee(deque<Coordinates> *wave_front, vector<Coordinates> *tra
     Coordinates curr = wave_front->front();
     // pop off the first record
     wave_front->pop_front();
-    // create a single holder var for our new coordinates
-    Coordinates temp;
 
     // Base case 2: We found the sink
-    if (curr.x == sink_coords.x && curr.y == sink_coords.y) {
+    if (is_sink(curr)) {
         printf("We found: (%d, %d) in %d moves\n",
                 sink_coords.x, sink_coords.y, (int) floor(iteration / 4) - 1);
         printf("=====================\n\n");
@@ -396,11 +558,9 @@ void Lee::run_original_lee(deque<Coordinates> *wave_front, vector<Coordinates> *
     Coordinates curr = wave_front->front();
     // pop off the first record
     wave_front->pop_front();
-    // create a single holder var for our new coordinates
-    Coordinates temp;
 
     // Base case 2: We found the sink
-    if(curr.x == sink_coords.x && curr.y == sink_coords.y) {
+    if (is_sink(curr)) {
         printf("We found: (%d, %d) in %d moves\n",
                 sink_coords.x, sink_coords.y, (int)floor(iteration/4)-1);
         printf("=====================\n\n");
