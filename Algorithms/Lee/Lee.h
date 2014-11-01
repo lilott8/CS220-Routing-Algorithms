@@ -38,13 +38,14 @@ private:
     bool is_placeable(int, int);
     bool is_adjacent(Coordinates, Coordinates);
     bool is_sink(Coordinates);
-
     bool is_source(Coordinates);
+
+    bool is_source(int, int);
     int calculate_euclidean_distance(int, int);
     int calculate_manhattan_distance(int, int);
     int calculate_manhattan_distance(Coordinates, Coordinates);
 
-    int get_bit_assignment(Coordinates);
+    int get_bit_assignment(int, int);
     // Variables
     Maps *lee_map;
     Coordinates sink_coords;

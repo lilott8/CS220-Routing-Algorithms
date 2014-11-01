@@ -60,9 +60,9 @@ void Lee::print_queue(deque<Coordinates> *wave_front) {
     string output = "";
     int x = 0;
     for (int x = 0; x < wave_front->size(); x++) {
-        output += "Record " + to_string(x)
+        output += "R " + to_string(x)
                 + ": (" + to_string(wave_front->at(x).x) + ", "
-                + to_string(wave_front->at(x).y) + ")\t Distance: "
+                + to_string(wave_front->at(x).y) + ")\t D: "
                 + to_string(wave_front->at(x).dist) + "\n";
         x++;
     }
@@ -104,6 +104,7 @@ bool Lee::is_placeable(int x, int y) {
         return false;
     }
     if(lee_map->get_map()->at(x).at(y) > 0) {
+        printf("Dont need to add: %d,%d\n", x, y);
         return false;
     }
     return true;
@@ -249,51 +250,121 @@ void Lee::calculate_next_move(deque<Coordinates> *wave_front, int x, int y) {
     }
 }
 
-int Lee::get_bit_assignment(Coordinates curr) {
+int Lee::get_bit_assignment(int x, int y) {
+    Coordinates temp;
     // this gives us our direction
-    int x = source_coords.x - curr.x;
-    int y = source_coords.y - curr.y;
-    int ones, twos = 0;
+    int diff_x = source_coords.x - x;
+    int diff_y = source_coords.y - y;
+    int ones = 0, twos = 0;
     int answer = 0;
 
-    printf("Sources Coordinates: %d, %d\n", source_coords.x, source_coords.y);
-    printf("Current Coordinates: %d, %d, dist: %d\n", curr.x, curr.y, curr.dist);
-    printf("General form of slope: %d, %d\n", x, y);
+    //printf("GBA Sources Coordinates: %d, %d\n", source_coords.x, source_coords.y);
+    printf("GBA Current Coordinates: %d, %d\n", x, y);
+    //printf("GBA General form of slope: %d, %d\n", x, y);
 
     // Work the sliding window for determining our 2-bitness
     // top left corner
-    if (x > 0 && y > 0) {
-        lee_map->get_map()->at(curr.x).at(curr.y++) <= 1 ? ones++ : twos++;
-        lee_map->get_map()->at(curr.x++).at(curr.y) <= 1 ? ones++ : twos++;
-        lee_map->get_map()->at(curr.x++).at(curr.y++) <= 1 ? ones++ : twos++;
+    /*if (diff_x >= 0 && diff_y >= 0) {
+        printf("##### Top Left ######\n");
+        printf("%d\t %d\n",lee_map->get_map()->at(x).at(y), lee_map->get_map()->at(x++).at(y));
+        printf("%d\t %d\n",lee_map->get_map()->at(x).at(y++), lee_map->get_map()->at(x++).at(y++));
+        printf("#####################\n");
+
+        if(lee_map->get_map()->at(x).at(y++) == 1)ones++;
+        else if(lee_map->get_map()->at(x).at(y++) == 2) twos++;
+
+        if(lee_map->get_map()->at(x++).at(y) == 1)ones++;
+        else if(lee_map->get_map()->at(x++).at(y) == 2) twos++;
+
+        if(lee_map->get_map()->at(x++).at(y++) == 1) ones++;
+        else if(lee_map->get_map()->at(x++).at(y++) == 2) twos++;
+
         printf("TL Ones: %d\t Twos: %d\n", ones, twos);
         (twos >= ones) ? answer = 1 : answer = 2;
     }
         // bottom right corner
-    else if (x < 0 && y < 0) {
-        lee_map->get_map()->at(curr.x).at(curr.y--) <= 1 ? ones++ : twos++;
-        lee_map->get_map()->at(curr.x--).at(curr.y) <= 1 ? ones++ : twos++;
-        lee_map->get_map()->at(curr.x--).at(curr.y--) <= 1 ? ones++ : twos++;
+    else if (diff_x <= 0 && diff_y <= 0) {
+        if(lee_map->get_map()->at(x).at(y--) == 1)ones++;
+        else if(lee_map->get_map()->at(x).at(y--) == 2) twos++;
+
+        if(lee_map->get_map()->at(x--).at(y) == 1)ones++;
+        else if(lee_map->get_map()->at(x--).at(y) == 2) twos++;
+
+        if(lee_map->get_map()->at(x--).at(y--) == 1) ones++;
+        else if(lee_map->get_map()->at(x--).at(y--) == 2) twos++;
         printf("BR Ones: %d\t Twos: %d\n", ones, twos);
         (twos >= ones) ? answer = 1 : answer = 2;
     }
         // bottom left corner
-    else if (x > 0 && y < 0) {
-        lee_map->get_map()->at(curr.x).at(curr.y--) <= 1 ? ones++ : twos++;
-        lee_map->get_map()->at(curr.x++).at(curr.y) <= 1 ? ones++ : twos++;
-        lee_map->get_map()->at(curr.x++).at(curr.y--) <= 1 ? ones++ : twos++;
+    else if (diff_x >= 0 && diff_y <= 0) {
+        if(lee_map->get_map()->at(x).at(y--) == 1)ones++;
+        else if(lee_map->get_map()->at(x).at(y--) == 2) twos++;
+
+        if(lee_map->get_map()->at(x++).at(y) == 1)ones++;
+        else if(lee_map->get_map()->at(x++).at(y) == 2) twos++;
+
+        if(lee_map->get_map()->at(x++).at(y--) == 1) ones++;
+        else if(lee_map->get_map()->at(x++).at(y--) == 2) twos++;
+
         printf("BL Ones: %d\t Twos: %d\n", ones, twos);
         (twos >= ones) ? answer = 1 : answer = 2;
     }
         // top right corner
-    else if (x < 0 && y > 0) {
-        lee_map->get_map()->at(curr.x).at(curr.y++) <= 1 ? ones++ : twos++;
-        lee_map->get_map()->at(curr.x--).at(curr.y) <= 1 ? ones++ : twos++;
-        lee_map->get_map()->at(curr.x--).at(curr.y++) <= 1 ? ones++ : twos++;
+    else if (diff_x <= 0 && diff_y >= 0) {
+        if(lee_map->get_map()->at(x).at(y++) == 1)ones++;
+        else if(lee_map->get_map()->at(x).at(y++) == 2) twos++;
+
+        if(lee_map->get_map()->at(x--).at(y) == 1)ones++;
+        else if(lee_map->get_map()->at(x--).at(y) == 2) twos++;
+
+        if(lee_map->get_map()->at(x--).at(y++) == 1) ones++;
+        else if(lee_map->get_map()->at(x--).at(y++) == 2) twos++;
         printf("TR Ones: %d\t Twos: %d\n", ones, twos);
         (twos >= ones) ? answer = 1 : answer = 2;
+    }*/
+
+
+    /*
+    // we check x-1, x-2
+    if(diff_x < 0) {
+        if(x-1 >= 0) {
+            printf("GBA < Looking at: %d, %d\n", x-1, y);
+            if(lee_map->get_map()->at(x-1).at(y) == 1) {
+                ones++;
+            } else if(lee_map->get_map()->at(x-1).at(y) == 2) {
+                twos++;
+            }
+        }
+        if(x-2 >= 0) {
+            printf("GBA < Looking at: %d, %d\n", x-2, y);
+            if(lee_map->get_map()->at(x-2).at(y) ==1) {
+                ones++;
+            } else if(lee_map->get_map()->at(x-2).at(y) == 2) {
+                twos++;
+            }
+        }
+    } else {
+        if(x+1 < lee_map->get_map()->size()) {
+            printf("GBA > Looking at: %d, %d\n", x+1, y);
+            if(lee_map->get_map()->at(x+1).at(y) ==1) {
+                ones++;
+            } else if(lee_map->get_map()->at(x+1).at(y) == 2) {
+                twos++;
+            }
+        }
+        if(x+2 < lee_map->get_map()->size()) {
+            printf("GBA > Looking at: %d, %d\n", x+2, y);
+            if(lee_map->get_map()->at(x+2).at(y) ==1) {
+                ones++;
+            } else if(lee_map->get_map()->at(x+2).at(y) == 2) {
+                twos++;
+            }
+        }
     }
-    printf("Returning with an answer of: %d\n", answer);
+    answer = ones >= twos ? 2 : 1;
+    */
+
+    printf("GBA Returning with an answer of: %d\n", answer);
     return answer;
 }
 
@@ -305,28 +376,28 @@ void Lee::calculate_next_move_2_bit(deque<Coordinates> *wave_front, Coordinates 
         if (is_placeable(curr.x + 1, curr.y)) {
             temp.x = curr.x + 1;
             temp.y = curr.y;
-            temp.dist = get_bit_assignment(curr);
+            temp.dist = get_bit_assignment(temp.x, temp.y);
             wave_front->push_back(temp);
             lee_map->get_map()->at(temp.x).at(temp.y) = temp.dist;
         }
         if (is_placeable(curr.x - 1, curr.y)) {
             temp.x = curr.x - 1;
             temp.y = curr.y;
-            temp.dist = get_bit_assignment(curr);
+            temp.dist = get_bit_assignment(temp.x, temp.y);
             wave_front->push_back(temp);
             lee_map->get_map()->at(temp.x).at(temp.y) = temp.dist;
         }
         if (is_placeable(curr.x, curr.y + 1)) {
             temp.x = curr.x;
             temp.y = curr.y + 1;
-            temp.dist = get_bit_assignment(curr);
+            temp.dist = get_bit_assignment(temp.x, temp.y);
             wave_front->push_back(temp);
             lee_map->get_map()->at(temp.x).at(temp.y) = temp.dist;
         }
         if (is_placeable(curr.x, curr.y - 1)) {
             temp.x = curr.x;
             temp.y = curr.y - 1;
-            temp.dist = get_bit_assignment(curr);
+            temp.dist = get_bit_assignment(temp.x, temp.y);
             wave_front->push_back(temp);
             lee_map->get_map()->at(temp.x).at(temp.y) = temp.dist;
         }
@@ -438,7 +509,7 @@ void Lee::run_2_bit_lee(deque<Coordinates> *wave_front, vector<Coordinates> *tra
 
     // Base case 1: Not finding a solution
     printf("size of queue: %lu\n", wave_front->size());
-    print_queue(wave_front);
+    //print_queue(wave_front);
     if (wave_front->size() < 1) {
         printf("We have nothing in our queue\n");
         printf("=====================\n\n");
