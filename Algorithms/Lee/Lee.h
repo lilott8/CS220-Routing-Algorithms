@@ -15,6 +15,10 @@ public:
     enum kLeeType {
         LEE, LEE_3_BIT, LEE_2_BIT
     };
+    enum kDirections {
+        TOP, LEFT, RIGHT, BOTTOM, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
+    };
+
     // Constructor
     Lee(Maps*);
 
@@ -40,7 +44,10 @@ private:
     bool is_sink(Coordinates);
     bool is_source(Coordinates);
 
+    bool at_edge(int, int, int);
     bool is_source(int, int);
+
+    int get_element_at(int, int);
     int calculate_euclidean_distance(int, int);
     int calculate_manhattan_distance(int, int);
     int calculate_manhattan_distance(Coordinates, Coordinates);

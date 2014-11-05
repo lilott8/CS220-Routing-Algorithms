@@ -86,6 +86,25 @@ void Lee::print_trace_back(vector<Coordinates> trace_back) {
     printf("+++++++++++++++++++++\n%s\n+++++++++++++++++++++\n", a);
 }
 
+bool Lee::at_edge(int x, int y, int max) {
+    while (max >= 1) {
+        if (x - max < -1) {
+            return true;
+        }
+        if (y - max < -1) {
+            return true;
+        }
+        if (x + max > lee_map->get_map()->size()) {
+            return true;
+        }
+        if (y + max > lee_map->get_map()->at(x).size()) {
+            return true;
+        }
+        max--;
+    }
+    return false;
+}
+
 bool Lee::is_placeable(int x, int y) {
     // Order matters here!
     if (x > lee_map->get_map()->size() - 1 || x < 0) {
@@ -139,6 +158,10 @@ int Lee::calculate_manhattan_distance(Coordinates curr, Coordinates prev) {
     order1 = abs(curr.x - prev.x);
     order2 = abs(curr.y - prev.y);
     return order1 + order2;
+}
+
+int Lee::get_element_at(int x, int y) {
+    return lee_map->get_map()->at(x).at(y);
 }
 
 bool Lee::is_adjacent(Coordinates curr, Coordinates prev) {
@@ -253,117 +276,124 @@ void Lee::calculate_next_move(deque<Coordinates> *wave_front, int x, int y) {
 int Lee::get_bit_assignment(int x, int y) {
     Coordinates temp;
     // this gives us our direction
+    // +diff means right side, -diff means left side
     int diff_x = source_coords.x - x;
+    // +diff means bottom, -diff means top
     int diff_y = source_coords.y - y;
     int ones = 0, twos = 0;
     int answer = 0;
+    kDirections d;
+
+    int size_x = lee_map->get_map()->size();
+    int size_y = lee_map->get_map()->at(x).size();
+
+    if (x == 0) {
+        if (y > 0) {
+            d = BOTTOM;
+        } else {
+            d = TOP;
+        }
+    }
+    else if (y == 0) {
+        if (x > 0) {
+            d = RIGHT;
+        } else {
+            d = LEFT;
+        }
+    }
+    else if (diff_x > 0 && diff_y > 0) {
+        d = kDirections::TOP_LEFT;
+    } else if (diff_x > 0 && diff_y < 0) {
+        d = kDirections::BOTTOM_LEFT;
+    } else if (diff_x < 0 && diff_y < 0) {
+        d = kDirections::BOTTOM_RIGHT;
+    } else if (diff_x < 0 && diff_y > 0) {
+        d = kDirections::TOP_RIGHT;
+    }
 
     //printf("GBA Sources Coordinates: %d, %d\n", source_coords.x, source_coords.y);
     printf("GBA Current Coordinates: %d, %d\n", x, y);
     //printf("GBA General form of slope: %d, %d\n", x, y);
 
-    // Work the sliding window for determining our 2-bitness
-    // top left corner
-    /*if (diff_x >= 0 && diff_y >= 0) {
-        printf("##### Top Left ######\n");
-        printf("%d\t %d\n",lee_map->get_map()->at(x).at(y), lee_map->get_map()->at(x++).at(y));
-        printf("%d\t %d\n",lee_map->get_map()->at(x).at(y++), lee_map->get_map()->at(x++).at(y++));
-        printf("#####################\n");
-
-        if(lee_map->get_map()->at(x).at(y++) == 1)ones++;
-        else if(lee_map->get_map()->at(x).at(y++) == 2) twos++;
-
-        if(lee_map->get_map()->at(x++).at(y) == 1)ones++;
-        else if(lee_map->get_map()->at(x++).at(y) == 2) twos++;
-
-        if(lee_map->get_map()->at(x++).at(y++) == 1) ones++;
-        else if(lee_map->get_map()->at(x++).at(y++) == 2) twos++;
-
-        printf("TL Ones: %d\t Twos: %d\n", ones, twos);
-        (twos >= ones) ? answer = 1 : answer = 2;
-    }
-        // bottom right corner
-    else if (diff_x <= 0 && diff_y <= 0) {
-        if(lee_map->get_map()->at(x).at(y--) == 1)ones++;
-        else if(lee_map->get_map()->at(x).at(y--) == 2) twos++;
-
-        if(lee_map->get_map()->at(x--).at(y) == 1)ones++;
-        else if(lee_map->get_map()->at(x--).at(y) == 2) twos++;
-
-        if(lee_map->get_map()->at(x--).at(y--) == 1) ones++;
-        else if(lee_map->get_map()->at(x--).at(y--) == 2) twos++;
-        printf("BR Ones: %d\t Twos: %d\n", ones, twos);
-        (twos >= ones) ? answer = 1 : answer = 2;
-    }
-        // bottom left corner
-    else if (diff_x >= 0 && diff_y <= 0) {
-        if(lee_map->get_map()->at(x).at(y--) == 1)ones++;
-        else if(lee_map->get_map()->at(x).at(y--) == 2) twos++;
-
-        if(lee_map->get_map()->at(x++).at(y) == 1)ones++;
-        else if(lee_map->get_map()->at(x++).at(y) == 2) twos++;
-
-        if(lee_map->get_map()->at(x++).at(y--) == 1) ones++;
-        else if(lee_map->get_map()->at(x++).at(y--) == 2) twos++;
-
-        printf("BL Ones: %d\t Twos: %d\n", ones, twos);
-        (twos >= ones) ? answer = 1 : answer = 2;
-    }
-        // top right corner
-    else if (diff_x <= 0 && diff_y >= 0) {
-        if(lee_map->get_map()->at(x).at(y++) == 1)ones++;
-        else if(lee_map->get_map()->at(x).at(y++) == 2) twos++;
-
-        if(lee_map->get_map()->at(x--).at(y) == 1)ones++;
-        else if(lee_map->get_map()->at(x--).at(y) == 2) twos++;
-
-        if(lee_map->get_map()->at(x--).at(y++) == 1) ones++;
-        else if(lee_map->get_map()->at(x--).at(y++) == 2) twos++;
-        printf("TR Ones: %d\t Twos: %d\n", ones, twos);
-        (twos >= ones) ? answer = 1 : answer = 2;
-    }*/
-
-
-    /*
-    // we check x-1, x-2
-    if(diff_x < 0) {
-        if(x-1 >= 0) {
-            printf("GBA < Looking at: %d, %d\n", x-1, y);
-            if(lee_map->get_map()->at(x-1).at(y) == 1) {
-                ones++;
-            } else if(lee_map->get_map()->at(x-1).at(y) == 2) {
-                twos++;
-            }
+    /***********************************
+    * if you don't have a x,y+/-1, look at x+/-1,y and x+/-2,y
+    *   If there isn't a number in either the vertical, look horizontal
+    * if you don't have a x+/-1,y, look at x,y+/-1 and x,y+/-2
+    * otherwise look at x+/-1,y+/-1, x+/-1,y, and x,y+/-1
+    ***********************************/
+    if (!at_edge(x, y, 2)) {
+        switch (d) {
+            case TOP:
+                // x=0, y--
+                get_element_at(x, y - 1) == 1 ? ones++ : 0;
+                get_element_at(x, y - 2) == 1 ? ones++ : 0;
+                get_element_at(x, y - 1) == 2 ? twos++ : 0;
+                get_element_at(x, y - 2) == 2 ? twos++ : 0;
+                break;
+            case BOTTOM:
+                // x=0, y++
+                get_element_at(x, y + 1) == 1 ? ones++ : 0;
+                get_element_at(x, y + 2) == 1 ? ones++ : 0;
+                get_element_at(x, y + 1) == 2 ? twos++ : 0;
+                get_element_at(x, y + 2) == 2 ? twos++ : 0;
+                break;
+            case RIGHT:
+                // x--, y=0
+                get_element_at(x - 1, y) == 1 ? ones++ : 0;
+                get_element_at(x - 2, y) == 1 ? ones++ : 0;
+                get_element_at(x - 1, y) == 2 ? twos++ : 0;
+                get_element_at(x - 2, y) == 2 ? twos++ : 0;
+                break;
+            case LEFT:
+                // x++, y=0
+                get_element_at(x + 1, y) == 1 ? ones++ : 0;
+                get_element_at(x + 2, y) == 1 ? ones++ : 0;
+                get_element_at(x + 1, y) == 2 ? twos++ : 0;
+                get_element_at(x + 2, y) == 2 ? twos++ : 0;
+                break;
         }
-        if(x-2 >= 0) {
-            printf("GBA < Looking at: %d, %d\n", x-2, y);
-            if(lee_map->get_map()->at(x-2).at(y) ==1) {
-                ones++;
-            } else if(lee_map->get_map()->at(x-2).at(y) == 2) {
-                twos++;
-            }
-        }
+        // check the +1/-1 case
     } else {
-        if(x+1 < lee_map->get_map()->size()) {
-            printf("GBA > Looking at: %d, %d\n", x+1, y);
-            if(lee_map->get_map()->at(x+1).at(y) ==1) {
-                ones++;
-            } else if(lee_map->get_map()->at(x+1).at(y) == 2) {
-                twos++;
-            }
-        }
-        if(x+2 < lee_map->get_map()->size()) {
-            printf("GBA > Looking at: %d, %d\n", x+2, y);
-            if(lee_map->get_map()->at(x+2).at(y) ==1) {
-                ones++;
-            } else if(lee_map->get_map()->at(x+2).at(y) == 2) {
-                twos++;
-            }
+        switch (d) {
+            case TOP_LEFT:
+                //++x, ++y
+                get_element_at(x + 1, y + 1) == 1 ? ones++ : 0;
+                get_element_at(x + 1, y) == 1 ? ones++ : 0;
+                get_element_at(x, y + 1) == 1 ? ones++ : 0;
+                get_element_at(x, y + 1) == 2 ? twos++ : 0;
+                get_element_at(x + 1, y) == 2 ? twos++ : 0;
+                get_element_at(x + 1, y + 1) == 2 ? twos++ : 0;
+                break;
+            case TOP_RIGHT:
+                //--x, --y
+                get_element_at(x - 1, y - 1) == 1 ? ones++ : 0;
+                get_element_at(x - 1, y) == 1 ? ones++ : 0;
+                get_element_at(x, y - 1) == 1 ? ones++ : 0;
+                get_element_at(x, y - 1) == 2 ? twos++ : 0;
+                get_element_at(x - 1, y) == 2 ? twos++ : 0;
+                get_element_at(x - 1, y - 1) == 2 ? twos++ : 0;
+                break;
+            case BOTTOM_LEFT:
+                //++x, --y
+                get_element_at(x + 1, y - 1) == 1 ? ones++ : 0;
+                get_element_at(x + 1, y) == 1 ? ones++ : 0;
+                get_element_at(x, y - 1) == 1 ? ones++ : 0;
+                get_element_at(x, y - 1) == 2 ? twos++ : 0;
+                get_element_at(x + 1, y) == 2 ? twos++ : 0;
+                get_element_at(x + 1, y - 1) == 2 ? twos++ : 0;
+                break;
+            case BOTTOM_RIGHT:
+                //--x, ++y
+                get_element_at(x - 1, y + 1) == 1 ? ones++ : 0;
+                get_element_at(x - 1, y) == 1 ? ones++ : 0;
+                get_element_at(x, y + 1) == 1 ? ones++ : 0;
+                get_element_at(x, y + 1) == 2 ? twos++ : 0;
+                get_element_at(x - 1, y) == 2 ? twos++ : 0;
+                get_element_at(x - 1, y + 1) == 2 ? twos++ : 0;
+                break;
         }
     }
-    answer = ones >= twos ? 2 : 1;
-    */
-
+    ones > twos ? answer = 1 : answer = 2;
     printf("GBA Returning with an answer of: %d\n", answer);
     return answer;
 }
