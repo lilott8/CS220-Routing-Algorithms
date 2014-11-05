@@ -16,3 +16,5 @@ target_link_libraries(CS220_Project LEE)
 target_link_libraries(CS220_Project DS)
 
 target_link_libraries(CS220_Project MAPS)
+
+target_link_libraries(CS220_Project HADLOCK)
