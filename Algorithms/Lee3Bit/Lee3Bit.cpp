@@ -1,20 +1,20 @@
 #include <deque>
-#include "Hadlock.h"
+#include "Lee3Bit.h"
 
-Hadlock::Hadlock() {
+Lee3Bit::Lee3Bit() {
     LeeBase::LeeBase();
 }
 
-Hadlock::Hadlock(Maps *m) {
+Lee3Bit::Lee3Bit(Maps *m) {
     LeeBase::LeeBase();
     LeeBase::set_map(m);
 }
 
-Hadlock::~Hadlock() {
+Lee3Bit::~Lee3Bit() {
     LeeBase::~LeeBase();
 }
 
-void Hadlock::start() {
+void Lee3Bit::start() {
     LeeBase::start();
 
     LeeBase::kWaveFront.push_back(kSource);
@@ -22,7 +22,7 @@ void Hadlock::start() {
     solve_recursive(0);
 }
 
-int Hadlock::solve_recursive(int iteration) {
+int Lee3Bit::solve_recursive(int iteration) {
 
     // Base case 1: Not finding a solution
     printf("size of queue: %lu\n", kWaveFront.size());
@@ -47,7 +47,6 @@ int Hadlock::solve_recursive(int iteration) {
     // Case 3: We still have places on the map to visit
     /**
     * Check each possibility of the next wavefront
-    * TODO: Change the logic that calculates the cost
     */
     vector<Coordinates> adjacent = get_adjacent_coordinates(curr);
 
@@ -57,13 +56,25 @@ int Hadlock::solve_recursive(int iteration) {
     solve_recursive(iteration + 1);
 
     // Handle the trace_back generation for the algorithm
-    /**
-    * TODO: Implement traceback logic for hadlock
-    */
+    if (kTraceBack.size() > 0) {
+        if (kTraceBack.back().dist == 1) {
+            // Handle the 3->1 hand off
+            if (curr.dist == 3 && is_adjacent(curr, kTraceBack.back())) {
+                kTraceBack.push_back(curr);
+                kMap->get_map()->at(curr.x).at(curr.y) = Maps::kTraceback;
+            }
+            // Otherwise just decrement as you should
+        } else {
+            if (curr.dist < kTraceBack.back().dist && is_adjacent(curr, kTraceBack.back())) {
+                kTraceBack.push_back(curr);
+                kMap->get_map()->at(curr.x).at(curr.y) = Maps::kTraceback;
+            }
+        }
+    }
     return iteration;
 }
 
-vector<Coordinates> Hadlock::get_adjacent_coordinates(Coordinates c) {
+vector<Coordinates> Lee3Bit::get_adjacent_coordinates(Coordinates c) {
     vector<Coordinates> results;
     Coordinates temp;
 

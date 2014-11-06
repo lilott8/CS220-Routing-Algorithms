@@ -1,20 +1,20 @@
 #include <deque>
-#include "Hadlock.h"
+#include "Lee2Bit.h"
 
-Hadlock::Hadlock() {
+Lee2Bit::Lee2Bit() {
     LeeBase::LeeBase();
 }
 
-Hadlock::Hadlock(Maps *m) {
+Lee2Bit::Lee2Bit(Maps *m) {
     LeeBase::LeeBase();
     LeeBase::set_map(m);
 }
 
-Hadlock::~Hadlock() {
+Lee2Bit::~Lee2Bit() {
     LeeBase::~LeeBase();
 }
 
-void Hadlock::start() {
+void Lee2Bit::start() {
     LeeBase::start();
 
     LeeBase::kWaveFront.push_back(kSource);
@@ -22,7 +22,7 @@ void Hadlock::start() {
     solve_recursive(0);
 }
 
-int Hadlock::solve_recursive(int iteration) {
+int Lee2Bit::solve_recursive(int iteration) {
 
     // Base case 1: Not finding a solution
     printf("size of queue: %lu\n", kWaveFront.size());
@@ -47,23 +47,29 @@ int Hadlock::solve_recursive(int iteration) {
     // Case 3: We still have places on the map to visit
     /**
     * Check each possibility of the next wavefront
-    * TODO: Change the logic that calculates the cost
+    * TODO: Change the logic that caclulates the distance!
     */
     vector<Coordinates> adjacent = get_adjacent_coordinates(curr);
 
     for (int x = 0; x < adjacent.size(); x++) {
         kWaveFront.push_back(adjacent.at(x));
     }
+
     solve_recursive(iteration + 1);
 
     // Handle the trace_back generation for the algorithm
     /**
-    * TODO: Implement traceback logic for hadlock
+    * TODO: Add the logic for the trace back here
     */
+
+    /**
+    * END
+    */
+
     return iteration;
 }
 
-vector<Coordinates> Hadlock::get_adjacent_coordinates(Coordinates c) {
+vector<Coordinates> Lee2Bit::get_adjacent_coordinates(Coordinates c) {
     vector<Coordinates> results;
     Coordinates temp;
 
@@ -71,8 +77,7 @@ vector<Coordinates> Hadlock::get_adjacent_coordinates(Coordinates c) {
     if (is_placeable(c.x, c.y + 1)) {
         temp.x = c.x;
         temp.y = c.y + 1;
-        temp.dist = (LeeBase::calculate_manhattan_distance(temp, kSource) % 3) == 0
-                ? 3 : (LeeBase::calculate_manhattan_distance(temp, kSource) % 3);
+        temp.dist = 0;
         kMap->get_map()->at(c.x).at(c.y + 1) = temp.dist;
         results.push_back(temp);
         printf("Adding (x,y+1): (%d, %d)\n", c.x, c.y + 1);
@@ -81,8 +86,7 @@ vector<Coordinates> Hadlock::get_adjacent_coordinates(Coordinates c) {
     if (is_placeable(c.x, c.y - 1)) {
         temp.x = c.x;
         temp.y = c.y - 1;
-        temp.dist = (LeeBase::calculate_manhattan_distance(temp, kSource) % 3) == 0
-                ? 3 : (LeeBase::calculate_manhattan_distance(temp, kSource) % 3);
+        temp.dist = 0;
         kMap->get_map()->at(c.x).at(c.y - 1) = temp.dist;
         results.push_back(temp);
         printf("Adding (x,y-1): (%d, %d)\n", c.x, c.y - 1);
@@ -91,8 +95,7 @@ vector<Coordinates> Hadlock::get_adjacent_coordinates(Coordinates c) {
     if (is_placeable(c.x + 1, c.y)) {
         temp.x = c.x + 1;
         temp.y = c.y;
-        temp.dist = (LeeBase::calculate_manhattan_distance(temp, kSource) % 3) == 0
-                ? 3 : (LeeBase::calculate_manhattan_distance(temp, kSource) % 3);
+        temp.dist = 0;
         kMap->get_map()->at(c.x + 1).at(c.y) = temp.dist;
         results.push_back(temp);
         printf("Adding (x+1,y): (%d, %d)\n", c.x + 1, c.y);
@@ -101,8 +104,7 @@ vector<Coordinates> Hadlock::get_adjacent_coordinates(Coordinates c) {
     if (is_placeable(c.x - 1, c.y)) {
         temp.x = c.x - 1;
         temp.y = c.y;
-        temp.dist = (LeeBase::calculate_manhattan_distance(temp, kSource) % 3) == 0
-                ? 3 : (LeeBase::calculate_manhattan_distance(temp, kSource) % 3);
+        temp.dist = 0;
         kMap->get_map()->at(c.x - 1).at(c.y) = temp.dist;
         results.push_back(temp);
         printf("Adding (x-1,y): (%d, %d)\n", c.x - 1, c.y);

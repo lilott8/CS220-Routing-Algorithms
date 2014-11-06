@@ -1,18 +1,9 @@
-#include <csignal>
-#include <deque>
-#include <iostream>
-#include <math.h>
-#include "../../Maps/Maps.h"
-#include "Lee.h"
-#include "../../DataStructures/BinaryTree.h"
-
 using namespace std;
 
 Maps *lee_map;
 
 Coordinates sink_coords;
 Coordinates source_coords;
-BinaryTree bTree;
 
 Lee::kLeeType type;
 
@@ -321,7 +312,7 @@ int Lee::get_bit_assignment(int x, int y) {
     * if you don't have a x+/-1,y, look at x,y+/-1 and x,y+/-2
     * otherwise look at x+/-1,y+/-1, x+/-1,y, and x,y+/-1
     ***********************************/
-    if (!at_edge(x, y, 2)) {
+    /*if (!at_edge(x, y, 2)) {
         switch (d) {
             case TOP:
                 // x=0, y--
@@ -392,7 +383,7 @@ int Lee::get_bit_assignment(int x, int y) {
                 get_element_at(x - 1, y + 1) == 2 ? twos++ : 0;
                 break;
         }
-    }
+    }*/
     ones > twos ? answer = 1 : answer = 2;
     printf("GBA Returning with an answer of: %d\n", answer);
     return answer;
@@ -495,7 +486,7 @@ void Lee::calculate_next_move_2_bit(deque<Coordinates> *wave_front, Coordinates 
 }
 
 
-void Lee::start_lee() {
+void Lee::start() {
     deque<Coordinates> wave_front;
     vector<Coordinates> trace_back;
 

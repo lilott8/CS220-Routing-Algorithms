@@ -1,15 +1,14 @@
 #pragma once
 
-#include "../../Maps/Maps.h"
 #include "../LeeBase/LeeBase.h"
 
-class Hadlock : public LeeBase {
+class Lee3Bit : public LeeBase {
 public:
-    Hadlock();
+    Lee3Bit();
 
-    Hadlock(Maps *);
+    Lee3Bit(Maps *);
 
-    ~Hadlock();
+    ~Lee3Bit();
 
     void start();
 

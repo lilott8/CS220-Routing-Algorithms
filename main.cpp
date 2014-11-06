@@ -1,5 +1,7 @@
 #include <iostream>
 #include "Algorithms/Lee/Lee.h"
+#include "Algorithms/Lee3Bit/Lee3Bit.h"
+#include "Algorithms/LeeOriginal/LeeOriginal.h"
 
 using namespace std;
 
@@ -11,9 +13,11 @@ int main() {
     if(use_random) {
         printf("Using random map\n");
         Maps *random_map = new Maps(10);
-        Lee lee(random_map, Lee::LEE);
-        lee.start_lee();
-        lee.print_map();
+        //Lee lee(random_map, Lee::LEE);
+        LeeOriginal lee(random_map);
+        lee.start();
+        //lee.print_map();
+        random_map->print_map();
         delete(random_map);
     }
 
@@ -25,9 +29,10 @@ int main() {
                 .set_sink(0, 6)
                 .set_source(3, 3);
 
-        Lee lee(debug_map, Lee::LEE_2_BIT);
+        //Lee lee(debug_map, Lee::LEE_3_BIT);
+        Lee3Bit lee(debug_map);
 
-        lee.start_lee();
+        lee.start();
 
         debug_map->print_map();
 

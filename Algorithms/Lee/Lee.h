@@ -2,13 +2,14 @@
 #include <deque>
 #include "../../Maps/Maps.h"
 #include "../../DataStructures/Global.h"
+#include "../LeeBase/LeeBase.h"
 
 using namespace std;
 
 class Coordinates;
 class Maps;
 
-class Lee {
+class Lee : public LeeBase {
 
 public:
     // Variables
@@ -25,7 +26,7 @@ public:
     Lee(Maps *, kLeeType);
     ~Lee();
     // Methods
-    void start_lee();
+    void start();
     void print_map();
 private:
     // Methods
