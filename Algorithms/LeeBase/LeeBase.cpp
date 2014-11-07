@@ -28,6 +28,9 @@ LeeBase &LeeBase::set_map(Maps *m) {
 void LeeBase::start() {
     kSink = kMap->get_sink_coordinates();
     kSource = kMap->get_source_coordinates();
+    // init the distances
+    kSink.dist = calculate_manhattan_distance(kSink, kSource);
+    kSource.dist = 0;
 
     printf("Starting to run our algorithm\n");
 }
@@ -73,11 +76,13 @@ bool LeeBase::is_adjacent(Coordinates a, Coordinates b) {
     delta_x = abs(a.x - b.x);
     delta_y = abs(a.y - b.y);
     // Just for debugging!
+    /*
     if ((delta_x == 0 && delta_y == 1) || (delta_x == 1 && delta_y == 0)) {
-        //printf("Delta_x: %d, Delta_y: %d\n", delta_x, delta_y);
+        printf("Delta_x: %d, Delta_y: %d\n", delta_x, delta_y);
     } else {
-        //printf("it's greater than one!\n");
+        printf("it's greater than one!\n");
     }
+    */
     //printf("---------------------\n");
     // make sure the result is 1 or less and the delta on x or y is 1
     return result <= 1 && (delta_x == 1 || delta_y == 1);
@@ -115,4 +120,13 @@ bool LeeBase::is_placeable(int x, int y) {
 
 bool LeeBase::is_adjacent_to_source(Coordinates c) {
     return calculate_manhattan_distance(c, kSource) == 1;
+}
+
+bool LeeBase::is_in_vector(Coordinates c) {
+    for (int x = 0; x < kWaveFront.size(); x++) {
+        if (kWaveFront.at(x).x == c.x && kWaveFront.at(x).y == c.y) {
+            return true;
+        }
+    }
+    return false;
 }

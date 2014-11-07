@@ -17,4 +17,6 @@ private:
     int solve_recursive(int);
 
     vector<Coordinates> get_adjacent_coordinates(Coordinates);
+
+    bool is_closer_to_sink(Coordinates, Coordinates);
 };

@@ -71,9 +71,11 @@ vector<Coordinates> Hadlock::get_adjacent_coordinates(Coordinates c) {
     if (is_placeable(c.x, c.y + 1)) {
         temp.x = c.x;
         temp.y = c.y + 1;
-        temp.dist = (LeeBase::calculate_manhattan_distance(temp, kSource) % 3) == 0
-                ? 3 : (LeeBase::calculate_manhattan_distance(temp, kSource) % 3);
-        kMap->get_map()->at(c.x).at(c.y + 1) = temp.dist;
+        if (is_closer_to_sink(c, temp))
+            temp.dist = calculate_manhattan_distance(c, kSource);
+        temp.detour = is_closer_to_sink(temp, kSink) ?
+                c.detour++ : c.detour;
+        kMap->get_map()->at(c.x).at(c.y + 1) = temp.detour;
         results.push_back(temp);
         printf("Adding (x,y+1): (%d, %d)\n", c.x, c.y + 1);
     }
@@ -81,9 +83,10 @@ vector<Coordinates> Hadlock::get_adjacent_coordinates(Coordinates c) {
     if (is_placeable(c.x, c.y - 1)) {
         temp.x = c.x;
         temp.y = c.y - 1;
-        temp.dist = (LeeBase::calculate_manhattan_distance(temp, kSource) % 3) == 0
-                ? 3 : (LeeBase::calculate_manhattan_distance(temp, kSource) % 3);
-        kMap->get_map()->at(c.x).at(c.y - 1) = temp.dist;
+        temp.dist = calculate_manhattan_distance(c, kSource);
+        temp.detour = is_closer_to_sink(temp, kSink) ?
+                c.detour++ : c.detour;
+        kMap->get_map()->at(c.x).at(c.y - 1) = temp.detour;
         results.push_back(temp);
         printf("Adding (x,y-1): (%d, %d)\n", c.x, c.y - 1);
     }
@@ -91,9 +94,10 @@ vector<Coordinates> Hadlock::get_adjacent_coordinates(Coordinates c) {
     if (is_placeable(c.x + 1, c.y)) {
         temp.x = c.x + 1;
         temp.y = c.y;
-        temp.dist = (LeeBase::calculate_manhattan_distance(temp, kSource) % 3) == 0
-                ? 3 : (LeeBase::calculate_manhattan_distance(temp, kSource) % 3);
-        kMap->get_map()->at(c.x + 1).at(c.y) = temp.dist;
+        temp.dist = calculate_manhattan_distance(c, kSource);
+        temp.detour = is_closer_to_sink(temp, kSink) ?
+                c.detour++ : c.detour;
+        kMap->get_map()->at(c.x + 1).at(c.y) = temp.detour;
         results.push_back(temp);
         printf("Adding (x+1,y): (%d, %d)\n", c.x + 1, c.y);
     }
@@ -101,11 +105,16 @@ vector<Coordinates> Hadlock::get_adjacent_coordinates(Coordinates c) {
     if (is_placeable(c.x - 1, c.y)) {
         temp.x = c.x - 1;
         temp.y = c.y;
-        temp.dist = (LeeBase::calculate_manhattan_distance(temp, kSource) % 3) == 0
-                ? 3 : (LeeBase::calculate_manhattan_distance(temp, kSource) % 3);
-        kMap->get_map()->at(c.x - 1).at(c.y) = temp.dist;
+        temp.dist = calculate_manhattan_distance(c, kSource);
+        temp.detour = is_closer_to_sink(temp, kSink) ?
+                c.detour++ : c.detour;
+        kMap->get_map()->at(c.x - 1).at(c.y) = temp.detour;
         results.push_back(temp);
         printf("Adding (x-1,y): (%d, %d)\n", c.x - 1, c.y);
     }
     return results;
+}
+
+bool Hadlock::is_closer_to_sink(Coordinates source, Coordinates destination) {
+    return true;
 }

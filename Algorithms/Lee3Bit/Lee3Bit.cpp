@@ -85,8 +85,10 @@ vector<Coordinates> Lee3Bit::get_adjacent_coordinates(Coordinates c) {
         temp.dist = (LeeBase::calculate_manhattan_distance(temp, kSource) % 3) == 0
                 ? 3 : (LeeBase::calculate_manhattan_distance(temp, kSource) % 3);
         kMap->get_map()->at(c.x).at(c.y + 1) = temp.dist;
-        results.push_back(temp);
-        printf("Adding (x,y+1): (%d, %d)\n", c.x, c.y + 1);
+        if (!is_in_vector(temp)) {
+            results.push_back(temp);
+            printf("Adding (x,y+1): (%d, %d)\n", c.x, c.y + 1);
+        }
     }
     // (x, y-1)
     if (is_placeable(c.x, c.y - 1)) {
@@ -95,8 +97,10 @@ vector<Coordinates> Lee3Bit::get_adjacent_coordinates(Coordinates c) {
         temp.dist = (LeeBase::calculate_manhattan_distance(temp, kSource) % 3) == 0
                 ? 3 : (LeeBase::calculate_manhattan_distance(temp, kSource) % 3);
         kMap->get_map()->at(c.x).at(c.y - 1) = temp.dist;
-        results.push_back(temp);
-        printf("Adding (x,y-1): (%d, %d)\n", c.x, c.y - 1);
+        if (!is_in_vector(temp)) {
+            results.push_back(temp);
+            printf("Adding (x,y-1): (%d, %d)\n", c.x, c.y - 1);
+        }
     }
     // (x+1, y)
     if (is_placeable(c.x + 1, c.y)) {
@@ -105,8 +109,10 @@ vector<Coordinates> Lee3Bit::get_adjacent_coordinates(Coordinates c) {
         temp.dist = (LeeBase::calculate_manhattan_distance(temp, kSource) % 3) == 0
                 ? 3 : (LeeBase::calculate_manhattan_distance(temp, kSource) % 3);
         kMap->get_map()->at(c.x + 1).at(c.y) = temp.dist;
-        results.push_back(temp);
-        printf("Adding (x+1,y): (%d, %d)\n", c.x + 1, c.y);
+        if (!is_in_vector(temp)) {
+            results.push_back(temp);
+            printf("Adding (x+1,y): (%d, %d)\n", c.x + 1, c.y);
+        }
     }
     // (x-1, y)
     if (is_placeable(c.x - 1, c.y)) {
@@ -115,8 +121,10 @@ vector<Coordinates> Lee3Bit::get_adjacent_coordinates(Coordinates c) {
         temp.dist = (LeeBase::calculate_manhattan_distance(temp, kSource) % 3) == 0
                 ? 3 : (LeeBase::calculate_manhattan_distance(temp, kSource) % 3);
         kMap->get_map()->at(c.x - 1).at(c.y) = temp.dist;
-        results.push_back(temp);
-        printf("Adding (x-1,y): (%d, %d)\n", c.x - 1, c.y);
+        if (!is_in_vector(temp)) {
+            results.push_back(temp);
+            printf("Adding (x-1,y): (%d, %d)\n", c.x - 1, c.y);
+        }
     }
     return results;
 }

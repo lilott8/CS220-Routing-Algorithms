@@ -11,6 +11,7 @@ struct Coordinates {
     int x;
     int y;
     int dist;
+    int detour;
 };
 
 struct node {

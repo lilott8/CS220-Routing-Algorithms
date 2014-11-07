@@ -1,6 +1,5 @@
 #include <iostream>
 #include "Algorithms/Lee/Lee.h"
-#include "Algorithms/Lee3Bit/Lee3Bit.h"
 #include "Algorithms/LeeOriginal/LeeOriginal.h"
 
 using namespace std;
@@ -30,7 +29,7 @@ int main() {
                 .set_source(3, 3);
 
         //Lee lee(debug_map, Lee::LEE_3_BIT);
-        Lee3Bit lee(debug_map);
+        LeeOriginal lee(debug_map);
 
         lee.start();
 

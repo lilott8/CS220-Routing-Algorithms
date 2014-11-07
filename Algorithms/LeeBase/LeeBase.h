@@ -48,4 +48,6 @@ protected:
     bool is_placeable(Coordinates);
 
     bool is_adjacent_to_source(Coordinates);
+
+    bool is_in_vector(Coordinates);
 };
