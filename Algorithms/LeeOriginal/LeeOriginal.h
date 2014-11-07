@@ -16,4 +16,6 @@ private:
     int solve_recursive(int);
 
     vector<Coordinates> get_adjacent_coordinates(Coordinates, int);
+
+    Coordinates calculate_metric(Coordinates);
 };

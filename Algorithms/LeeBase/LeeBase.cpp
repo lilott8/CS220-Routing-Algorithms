@@ -1,5 +1,6 @@
 #include <deque>
 #include <stdlib.h>
+#include <cmath>
 #include "LeeBase.h"
 
 Maps *kMap;
@@ -31,6 +32,7 @@ void LeeBase::start() {
     // init the distances
     kSink.dist = calculate_manhattan_distance(kSink, kSource);
     kSource.dist = 0;
+    kSource.detour = 0;
 
     printf("Starting to run our algorithm\n");
 }
@@ -62,6 +64,14 @@ int LeeBase::calculate_manhattan_distance(Coordinates a, Coordinates b) {
     order1 = abs(a.x - b.x);
     order2 = abs(a.y - b.y);
     return order1 + order2;
+}
+
+double LeeBase::calculate_euclidean_distance(Coordinates a, Coordinates b) {
+    int order1, order2;
+    order1 = (a.x - b.x) * (a.x - b.x);
+    order2 = (a.y - b.y) * (a.y - b.y);
+    // http://stackoverflow.com/questions/9695329/c-how-to-round-a-double-to-an-int
+    return (sqrt(order1 + order2) + .5);
 }
 
 bool LeeBase::is_adjacent(Coordinates a, Coordinates b) {

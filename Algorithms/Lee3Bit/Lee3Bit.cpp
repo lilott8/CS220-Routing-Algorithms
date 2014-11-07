@@ -41,6 +41,7 @@ int Lee3Bit::solve_recursive(int iteration) {
     if (is_sink(curr)) {
         // add the sink to the trace_back
         kTraceBack.push_back(curr);
+        kMap->get_map()->at(curr.x).at(curr.y) = Maps::kTraceback;
         return iteration;
     }
 
@@ -82,49 +83,56 @@ vector<Coordinates> Lee3Bit::get_adjacent_coordinates(Coordinates c) {
     if (is_placeable(c.x, c.y + 1)) {
         temp.x = c.x;
         temp.y = c.y + 1;
-        temp.dist = (LeeBase::calculate_manhattan_distance(temp, kSource) % 3) == 0
-                ? 3 : (LeeBase::calculate_manhattan_distance(temp, kSource) % 3);
-        kMap->get_map()->at(c.x).at(c.y + 1) = temp.dist;
         if (!is_in_vector(temp)) {
+            temp = calculate_metric(temp);
             results.push_back(temp);
-            printf("Adding (x,y+1): (%d, %d)\n", c.x, c.y + 1);
+            printf("Adding (x,y+1): (%d, %d)\n", temp.x, temp.y);
         }
     }
     // (x, y-1)
     if (is_placeable(c.x, c.y - 1)) {
         temp.x = c.x;
         temp.y = c.y - 1;
-        temp.dist = (LeeBase::calculate_manhattan_distance(temp, kSource) % 3) == 0
-                ? 3 : (LeeBase::calculate_manhattan_distance(temp, kSource) % 3);
-        kMap->get_map()->at(c.x).at(c.y - 1) = temp.dist;
         if (!is_in_vector(temp)) {
+            temp = calculate_metric(temp);
             results.push_back(temp);
-            printf("Adding (x,y-1): (%d, %d)\n", c.x, c.y - 1);
+            printf("Adding (x,y-1): (%d, %d)\n", temp.x, temp.y);
         }
     }
     // (x+1, y)
     if (is_placeable(c.x + 1, c.y)) {
         temp.x = c.x + 1;
         temp.y = c.y;
-        temp.dist = (LeeBase::calculate_manhattan_distance(temp, kSource) % 3) == 0
-                ? 3 : (LeeBase::calculate_manhattan_distance(temp, kSource) % 3);
-        kMap->get_map()->at(c.x + 1).at(c.y) = temp.dist;
         if (!is_in_vector(temp)) {
+            temp = calculate_metric(temp);
             results.push_back(temp);
-            printf("Adding (x+1,y): (%d, %d)\n", c.x + 1, c.y);
+            printf("Adding (x+1,y): (%d, %d)\n", temp.x, temp.y);
         }
     }
     // (x-1, y)
     if (is_placeable(c.x - 1, c.y)) {
         temp.x = c.x - 1;
         temp.y = c.y;
-        temp.dist = (LeeBase::calculate_manhattan_distance(temp, kSource) % 3) == 0
-                ? 3 : (LeeBase::calculate_manhattan_distance(temp, kSource) % 3);
-        kMap->get_map()->at(c.x - 1).at(c.y) = temp.dist;
         if (!is_in_vector(temp)) {
+            temp = calculate_metric(temp);
             results.push_back(temp);
-            printf("Adding (x-1,y): (%d, %d)\n", c.x - 1, c.y);
+            printf("Adding (x-1,y): (%d, %d)\n", temp.x, temp.y);
         }
     }
     return results;
+}
+
+Coordinates Lee3Bit::calculate_metric(Coordinates a) {
+    Coordinates temp = a;
+
+    int dist = calculate_manhattan_distance(a, kSource);
+
+    if (dist % 3 == 0) {
+        temp.dist = 3;
+    } else {
+        temp.dist = dist % 3;
+    }
+    kMap->get_map()->at(temp.x).at(temp.y) = temp.dist;
+
+    return temp;
 }

@@ -31,7 +31,7 @@ protected:
 
     int caclulate_euclidean_distance(int, int);
 
-    int calculate_euclidean_distance(Coordinates, Coordinates);
+    double calculate_euclidean_distance(Coordinates, Coordinates);
 
     bool is_sink(Coordinates);
 

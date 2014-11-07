@@ -18,5 +18,5 @@ private:
 
     vector<Coordinates> get_adjacent_coordinates(Coordinates);
 
-    bool is_closer_to_sink(Coordinates, Coordinates);
+    bool is_in_vector(Coordinates);
 };
