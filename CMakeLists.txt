@@ -17,6 +17,7 @@ target_link_libraries(CS220_Project LEE_ORIGINAL)
 target_link_libraries(CS220_Project LEE_2BIT)
 target_link_libraries(CS220_Project LEE_3BIT)
 target_link_libraries(CS220_Project HADLOCK)
+target_link_libraries(CS220_Project RUBEN)
 
 # Others
 target_link_libraries(CS220_Project DS)

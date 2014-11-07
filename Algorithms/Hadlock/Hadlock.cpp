@@ -169,6 +169,7 @@ vector<Coordinates> Hadlock::get_adjacent_coordinates(Coordinates c) {
     return results;
 }
 
+
 bool Hadlock::is_in_vector(Coordinates c) {
     return false;
 }

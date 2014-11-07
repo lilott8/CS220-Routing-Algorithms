@@ -25,6 +25,10 @@ Maps::Maps(int x) {
     initialized = true;
 }
 
+Maps::Maps(string fn) {
+
+}
+
 vector< vector<int> > *Maps::get_map() {
     return &map;
 }

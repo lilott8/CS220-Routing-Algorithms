@@ -9,6 +9,8 @@ public:
     // Constructor
     Maps();
     Maps(int);
+
+    Maps(string);
     // Methods
     vector<vector<int> > *get_map();
     Maps &set_difficulty(int);

@@ -3,13 +3,13 @@
 #include "../../Maps/Maps.h"
 #include "../LeeBase/LeeBase.h"
 
-class Hadlock : public LeeBase {
+class Ruben : public LeeBase {
 public:
-    Hadlock();
+    Ruben();
 
-    Hadlock(Maps *);
+    Ruben(Maps *);
 
-    ~Hadlock();
+    ~Ruben();
 
     void start();
 
@@ -19,6 +19,4 @@ private:
     vector<Coordinates> get_adjacent_coordinates(Coordinates);
 
     bool is_in_vector(Coordinates);
-
-    Coordinates calculate_metric(Coordinates, Coordinates);
 };
