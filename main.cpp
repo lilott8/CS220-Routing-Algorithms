@@ -81,15 +81,15 @@ int main(int argc, char *argv[]) {
         case LEE:
         default:
             printf("Using Lee's Algorithm\n");
-            object = LeeOriginal(map);
+            object = LeeOriginal();
             break;
         case LEE2BIT:
             printf("Using Lee's 2-bit Algorithm\n");
-            object = Lee2Bit(map);
+            object = Lee2Bit();
             break;
         case LEE3BIT:
             printf("Using Lee's 3-Bit Algorithm\n");
-            object = Lee3Bit(map);
+            object = Lee3Bit();
             break;
         case KORN:
             //object = Korn(map);
@@ -98,14 +98,15 @@ int main(int argc, char *argv[]) {
             break;
         case RUBEN:
             printf("Using Ruben's Algorithm\n");
-            object = Ruben(map);
+            object = Ruben();
             break;
         case HADLOCK:
             printf("Using Hadlock's Algorithm\n");
-            object = Hadlock(map);
+            object = Hadlock();
             break;
     }
 
+    object.set_map(map);
     object.start();
 
     map->print_map();
@@ -165,7 +166,7 @@ Maps *do_test() {
 }
 
 Maps *do_file(string fn) {
-    printf("Generating a map from file\n");
+    printf("Generating a map from file: %s\n", fn.c_str());
     Maps *file_map = new Maps(fn);
     return file_map;
 }

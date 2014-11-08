@@ -3,54 +3,75 @@
 #include <string>
 #include <ostream>
 #include <iostream>
+#include <fstream>
 #include "Maps.h"
 
 using namespace std;
 
-/**int difficulty;
-bool initialized = false;
-vector<vector <int> > map;
-
-Coordinates source_coordinates;
-Coordinates sink_coordinates;**/
-
 Maps::Maps() {
-    initialized = false;
+    kInitialized = false;
 }
 
 Maps::Maps(int x) {
-    difficulty = x;
+    kDifficulty = x;
     initialize_map();
     set_points();
-    initialized = true;
+    kInitialized = true;
 }
 
 Maps::Maps(string fn) {
+    ifstream inFile(fn);
+    if (!inFile) {
+        printf("Error finding file %s\n", fn.c_str());
+    }
+    string line;
+    int line_number = 0;
+    while (getline(inFile, line)) {
 
+        vector<int> temp;
+        kMap.push_back(temp);
+
+        int i = 0;
+        for (char &c : line) {
+            if (c == '0') {
+                kMap.at(line_number).push_back(0);
+            } else if (c == 'b') {
+                kMap.at(line_number).push_back(-3);
+            } else if (c == 't') {
+                kMap.at(line_number).push_back(-2);
+            } else if (c == 's') {
+                kMap.at(line_number).push_back(-1);
+            }
+            i++;
+        }
+        line_number++;
+    }
+    inFile.close();
+    printf("Done reading file\n");
 }
 
 vector< vector<int> > *Maps::get_map() {
-    return &map;
+    return &kMap;
 }
 
 Maps &Maps::set_difficulty(int x) {
-    difficulty = x;
-    if (!initialized) {
+    kDifficulty = x;
+    if (!kInitialized) {
         initialize_map();
-        initialized = true;
+        kInitialized = true;
     }
     return *this;
 }
 
 Maps &Maps::set_sink(int x, int y) {
-    map.at(x).at(y) = -2;
+    kMap.at(x).at(y) = -2;
     sink_coordinates.x = x;
     sink_coordinates.y = y;
     return *this;
 }
 
 Maps &Maps::set_source(int x, int y) {
-    map.at(x).at(y) = -1;
+    kMap.at(x).at(y) = -1;
     source_coordinates.x = x;
     source_coordinates.y = y;
     return *this;
@@ -66,14 +87,14 @@ Coordinates Maps::get_source_coordinates() {
 
 void Maps::zero_out_map() {
     int place = 0;
-    for (int x = 0; x < map.size(); x++) {
-        for (int y = 0; y < map.at(x).size(); y++) {
-            place = map.at(x).at(y);
+    for (int x = 0; x < kMap.size(); x++) {
+        for (int y = 0; y < kMap.at(x).size(); y++) {
+            place = kMap.at(x).at(y);
             if (place != Maps::kTraceback &&
                     place != Maps::kUntraversable &&
                     place != Maps::kSink &&
                     place != Maps::kSource) {
-                map.at(x).at(y) = 0;
+                kMap.at(x).at(y) = 0;
             }
         }
     }
@@ -84,9 +105,9 @@ void Maps::zero_out_map() {
 *   Init the map vector
 */
 void Maps::initialize_map() {
-    for(int x=0; x<difficulty; x++) {
-        vector<int> v(difficulty,0);
-        map.push_back(v);
+    for (int x = 0; x < kDifficulty; x++) {
+        vector<int> v(kDifficulty, 0);
+        kMap.push_back(v);
     }
 }
 
@@ -96,18 +117,18 @@ void Maps::initialize_map() {
 */
 void Maps::set_points() {
     srand(time(NULL));
-    int startx = rand()%difficulty;
-    int starty = rand()%difficulty;
-    int endx = rand()%difficulty;
-    int endy = rand()%difficulty;
+    int startx = rand() % kDifficulty;
+    int starty = rand() % kDifficulty;
+    int endx = rand() % kDifficulty;
+    int endy = rand() % kDifficulty;
 
     source_coordinates.x = startx;
     source_coordinates.y = starty;
 
     // ensure our start/ends aren't the same
     while(startx == endx && starty == endy) {
-        endx = rand()%difficulty;
-        endy = rand()%difficulty;
+        endx = rand() % kDifficulty;
+        endy = rand() % kDifficulty;
     }
     // Must occur after the loop so that
     // they are correct
@@ -116,15 +137,15 @@ void Maps::set_points() {
 
     // set the values so our algorithm knows where
     // to start and end
-    map.at(startx).at(starty) = Maps::kSource;
-    map.at(endx).at(endy) = Maps::kSink;
+    kMap.at(startx).at(starty) = Maps::kSource;
+    kMap.at(endx).at(endy) = Maps::kSink;
 }
 
 void Maps::print_map() {
     string output = "";
     vector< vector<int> >::iterator row;
     vector<int>::iterator column;
-    for(row = map.begin(); row != map.end(); row++) {
+    for (row = kMap.begin(); row != kMap.end(); row++) {
         for(column = row->begin(); column != row->end(); column++) {
             output += to_string(*column) + "\t";
         }

@@ -32,9 +32,9 @@ private:
     void initialize_map();
     void set_points();
     // Variables
-    vector<vector<int> > map;
-    int difficulty;
-    bool initialized;
+    vector<vector<int> > kMap;
+    int kDifficulty;
+    bool kInitialized;
     Coordinates source_coordinates;
     Coordinates sink_coordinates;
 };
