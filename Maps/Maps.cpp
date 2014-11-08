@@ -19,6 +19,9 @@ Maps::Maps(int x) {
     kInitialized = true;
 }
 
+/**
+* TODO: Figure out why I can't use my constants here!
+*/
 Maps::Maps(string fn) {
     ifstream inFile(fn);
     if (!inFile) {
@@ -39,8 +42,12 @@ Maps::Maps(string fn) {
                 kMap.at(line_number).push_back(-3);
             } else if (c == 't') {
                 kMap.at(line_number).push_back(-2);
+                kSinkCoords.x = i;
+                kSinkCoords.y = line_number;
             } else if (c == 's') {
                 kMap.at(line_number).push_back(-1);
+                kSourceCoords.x = i;
+                kSourceCoords.y = line_number;
             }
             i++;
         }
@@ -48,6 +55,8 @@ Maps::Maps(string fn) {
     }
     inFile.close();
     printf("Done reading file\n");
+    printf("Source coords: %d, %d\n", kSourceCoords.x, kSourceCoords.y);
+    printf("Sink coords: %d, %d\n", kSinkCoords.x, kSinkCoords.y);
 }
 
 vector< vector<int> > *Maps::get_map() {
@@ -65,24 +74,24 @@ Maps &Maps::set_difficulty(int x) {
 
 Maps &Maps::set_sink(int x, int y) {
     kMap.at(x).at(y) = -2;
-    sink_coordinates.x = x;
-    sink_coordinates.y = y;
+    kSinkCoords.x = x;
+    kSinkCoords.y = y;
     return *this;
 }
 
 Maps &Maps::set_source(int x, int y) {
     kMap.at(x).at(y) = -1;
-    source_coordinates.x = x;
-    source_coordinates.y = y;
+    kSourceCoords.x = x;
+    kSourceCoords.y = y;
     return *this;
 }
 
 Coordinates Maps::get_sink_coordinates() {
-    return sink_coordinates;
+    return kSinkCoords;
 };
 
 Coordinates Maps::get_source_coordinates() {
-    return source_coordinates;
+    return kSourceCoords;
 };
 
 void Maps::zero_out_map() {
@@ -122,8 +131,8 @@ void Maps::set_points() {
     int endx = rand() % kDifficulty;
     int endy = rand() % kDifficulty;
 
-    source_coordinates.x = startx;
-    source_coordinates.y = starty;
+    kSourceCoords.x = startx;
+    kSourceCoords.y = starty;
 
     // ensure our start/ends aren't the same
     while(startx == endx && starty == endy) {
@@ -132,8 +141,8 @@ void Maps::set_points() {
     }
     // Must occur after the loop so that
     // they are correct
-    sink_coordinates.x = endx;
-    sink_coordinates.y = endy;
+    kSinkCoords.x = endx;
+    kSinkCoords.y = endy;
 
     // set the values so our algorithm knows where
     // to start and end

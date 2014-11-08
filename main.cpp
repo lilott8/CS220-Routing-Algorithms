@@ -30,7 +30,6 @@ int main(int argc, char *argv[]) {
 
     MapType m_type;
     Algorithm a_type;
-    LeeBase object;
     string file = "easy.txt";
     double korn_modifier = 1.5;
 
@@ -77,38 +76,43 @@ int main(int argc, char *argv[]) {
             break;
     }
 
+    /**
+    * TODO: Figure out how to do variable derivation
+    */
+    LeeOriginal lo = LeeOriginal(map);
+    Lee2Bit l2 = Lee2Bit(map);
+    Lee3Bit l3 = Lee3Bit(map);
+    Ruben r = Ruben();
+    Hadlock h = Hadlock();
+
     switch (a_type) {
         case LEE:
         default:
             printf("Using Lee's Algorithm\n");
-            object = LeeOriginal();
+            lo.start();
             break;
         case LEE2BIT:
             printf("Using Lee's 2-bit Algorithm\n");
-            object = Lee2Bit();
+            l2.start();
             break;
         case LEE3BIT:
             printf("Using Lee's 3-Bit Algorithm\n");
-            object = Lee3Bit();
+            l3.start();
             break;
         case KORN:
-            //object = Korn(map);
+            //*object = Korn(map);
             // object.set_overpull(korn_modifier);
             printf("Nothing for KORN yet");
             break;
         case RUBEN:
             printf("Using Ruben's Algorithm\n");
-            object = Ruben();
+            r.start();
             break;
         case HADLOCK:
             printf("Using Hadlock's Algorithm\n");
-            object = Hadlock();
+            h.start();
             break;
     }
-
-    object.set_map(map);
-    object.start();
-
     map->print_map();
 
     return 0;

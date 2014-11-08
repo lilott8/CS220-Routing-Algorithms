@@ -11,3 +11,7 @@ Ruben::Ruben(Maps *m) {
 Ruben::~Ruben() {
 
 }
+
+void Ruben::start() {
+    printf("add ruben's logic\n");
+}

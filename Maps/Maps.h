@@ -35,6 +35,6 @@ private:
     vector<vector<int> > kMap;
     int kDifficulty;
     bool kInitialized;
-    Coordinates source_coordinates;
-    Coordinates sink_coordinates;
+    Coordinates kSourceCoords;
+    Coordinates kSinkCoords;
 };

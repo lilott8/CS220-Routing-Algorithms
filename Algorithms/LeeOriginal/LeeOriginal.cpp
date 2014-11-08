@@ -16,6 +16,7 @@ LeeOriginal::~LeeOriginal() {
 
 void LeeOriginal::start() {
     LeeBase::start();
+    printf("Starting LeeOriginal\n");
 
     LeeBase::kWaveFront.push_back(kSource);
 
