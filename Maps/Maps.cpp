@@ -29,6 +29,7 @@ Maps::Maps(string fn) {
     }
     string line;
     int line_number = 0;
+    Coordinates ts, tt;
     while (getline(inFile, line)) {
 
         vector<int> temp;
@@ -37,17 +38,17 @@ Maps::Maps(string fn) {
         int i = 0;
         for (char &c : line) {
             if (c == '0') {
-                kMap.at(line_number).push_back(0);
+                Maps::kMap.at(line_number).push_back(0);
             } else if (c == 'b') {
-                kMap.at(line_number).push_back(-3);
+                Maps::kMap.at(line_number).push_back(-3);
             } else if (c == 't') {
-                kMap.at(line_number).push_back(-2);
-                kSinkCoords.x = i;
-                kSinkCoords.y = line_number;
+                Maps::kMap.at(line_number).push_back(-2);
+                Maps::kSinkCoords.x = i;
+                Maps::kSinkCoords.y = line_number;
             } else if (c == 's') {
-                kMap.at(line_number).push_back(-1);
-                kSourceCoords.x = i;
-                kSourceCoords.y = line_number;
+                Maps::kMap.at(line_number).push_back(-1);
+                Maps::kSourceCoords.x = i;
+                Maps::kSourceCoords.y = line_number;
             }
             i++;
         }
@@ -55,8 +56,6 @@ Maps::Maps(string fn) {
     }
     inFile.close();
     printf("Done reading file\n");
-    printf("Source coords: %d, %d\n", kSourceCoords.x, kSourceCoords.y);
-    printf("Sink coords: %d, %d\n", kSinkCoords.x, kSinkCoords.y);
 }
 
 vector< vector<int> > *Maps::get_map() {
@@ -73,24 +72,26 @@ Maps &Maps::set_difficulty(int x) {
 }
 
 Maps &Maps::set_sink(int x, int y) {
-    kMap.at(x).at(y) = -2;
+    kMap.at(x).at(y) = Maps::kSink;
     kSinkCoords.x = x;
     kSinkCoords.y = y;
     return *this;
 }
 
 Maps &Maps::set_source(int x, int y) {
-    kMap.at(x).at(y) = -1;
+    kMap.at(x).at(y) = Maps::kSource;
     kSourceCoords.x = x;
     kSourceCoords.y = y;
     return *this;
 }
 
 Coordinates Maps::get_sink_coordinates() {
+    printf("Looking for these: %d, %d\n", kSinkCoords.x, kSinkCoords.y);
     return kSinkCoords;
 };
 
 Coordinates Maps::get_source_coordinates() {
+    printf("Starting at these: %d, %d\n", kSourceCoords.x, kSourceCoords.y);
     return kSourceCoords;
 };
 

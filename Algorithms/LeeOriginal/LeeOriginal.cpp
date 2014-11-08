@@ -79,7 +79,7 @@ vector<Coordinates> LeeOriginal::get_adjacent_coordinates(Coordinates c, int ite
             results.push_back(temp);
             printf("Adding (x,y+1): (%d, %d)\n", temp.x, temp.y);
         }
-    }
+    } else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.x, c.y + 1);}
     // (x, y-1)
     if (is_placeable(c.x, c.y - 1)) {
         temp.x = c.x;
@@ -89,7 +89,7 @@ vector<Coordinates> LeeOriginal::get_adjacent_coordinates(Coordinates c, int ite
             results.push_back(temp);
             printf("Adding (x,y-1): (%d, %d)\n", temp.x, temp.y);
         }
-    }
+    } else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.x, c.y - 1);}
     // (x+1, y)
     if (is_placeable(c.x + 1, c.y)) {
         temp.x = c.x + 1;
@@ -99,7 +99,7 @@ vector<Coordinates> LeeOriginal::get_adjacent_coordinates(Coordinates c, int ite
             results.push_back(temp);
             printf("Adding (x+1,y): (%d, %d)\n", temp.x, temp.y);
         }
-    }
+    } else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.x + 1, c.y);}
     // (x-1, y)
     if (is_placeable(c.x - 1, c.y)) {
         temp.x = c.x - 1;
@@ -109,7 +109,7 @@ vector<Coordinates> LeeOriginal::get_adjacent_coordinates(Coordinates c, int ite
             results.push_back(temp);
             printf("Adding (x-1,y): (%d, %d)\n", temp.x, temp.y);
         }
-    }
+    } else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.x - 1, c.y);}
     return results;
 }
 

@@ -17,6 +17,8 @@ Lee3Bit::~Lee3Bit() {
 void Lee3Bit::start() {
     LeeBase::start();
 
+    printf("Looking for the sink: %d, %d\n", kSink.x, kSink.y);
+
     LeeBase::kWaveFront.push_back(kSource);
 
     solve_recursive(0);

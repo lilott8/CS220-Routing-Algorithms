@@ -17,8 +17,8 @@ Hadlock::Hadlock() {
 }
 
 Hadlock::Hadlock(Maps *m) {
-    LeeBase::LeeBase();
-    LeeBase::set_map(m);
+    //LeeBase::LeeBase();
+    //LeeBase::set_map(m);
 }
 
 Hadlock::~Hadlock() {
@@ -30,7 +30,9 @@ void Hadlock::start() {
 
     kWaveFrontHadlock.push(kSource);
 
-    solve_recursive(0);
+    printf("Source coords: %d, %d\n", kSource.x, kSource.y);
+
+    //solve_recursive(0);
 }
 
 int Hadlock::solve_recursive(int iteration) {
