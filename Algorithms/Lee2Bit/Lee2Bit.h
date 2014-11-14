@@ -15,7 +15,7 @@ public:
 private:
     int solve_recursive(int);
 
-    vector<Coordinates> get_adjacent_coordinates(Coordinates);
+    vector<Coordinates> get_adjacent_coordinates(Coordinates, int);
 
-    Coordinates calculate_metric(Coordinates);
+    Coordinates calculate_metric(Coordinates, int);
 };

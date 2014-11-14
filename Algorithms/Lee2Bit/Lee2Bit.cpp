@@ -24,6 +24,8 @@ void Lee2Bit::start() {
 
 int Lee2Bit::solve_recursive(int iteration) {
 
+    iteration = iteration == 4 ? 0 : iteration;
+
     // Base case 1: Not finding a solution
     printf("size of queue: %lu\n", kWaveFront.size());
     if (kWaveFront.size() < 1) {
@@ -49,7 +51,7 @@ int Lee2Bit::solve_recursive(int iteration) {
     /**
     * Check each possibility of the next wavefront
     */
-    vector<Coordinates> adjacent = get_adjacent_coordinates(curr);
+    vector<Coordinates> adjacent = get_adjacent_coordinates(curr, iteration);
 
     for (int x = 0; x < adjacent.size(); x++) {
         kWaveFront.push_back(adjacent.at(x));
@@ -69,7 +71,7 @@ int Lee2Bit::solve_recursive(int iteration) {
     return iteration;
 }
 
-vector<Coordinates> Lee2Bit::get_adjacent_coordinates(Coordinates c) {
+vector<Coordinates> Lee2Bit::get_adjacent_coordinates(Coordinates c, int iteration) {
     vector<Coordinates> results;
     Coordinates temp;
 
@@ -78,7 +80,7 @@ vector<Coordinates> Lee2Bit::get_adjacent_coordinates(Coordinates c) {
         temp.x = c.x;
         temp.y = c.y + 1;
         if (!is_in_vector(temp)) {
-            temp = calculate_metric(temp);
+            temp = calculate_metric(temp, iteration);
             results.push_back(temp);
             printf("Adding (x,y+1): (%d, %d)\n", temp.x, temp.y);
         }
@@ -88,7 +90,7 @@ vector<Coordinates> Lee2Bit::get_adjacent_coordinates(Coordinates c) {
         temp.x = c.x;
         temp.y = c.y - 1;
         if (!is_in_vector(temp)) {
-            temp = calculate_metric(temp);
+            temp = calculate_metric(temp, iteration);
             results.push_back(temp);
             printf("Adding (x,y-1): (%d, %d)\n", temp.x, temp.y);
         }
@@ -98,7 +100,7 @@ vector<Coordinates> Lee2Bit::get_adjacent_coordinates(Coordinates c) {
         temp.x = c.x + 1;
         temp.y = c.y;
         if (!is_in_vector(temp)) {
-            temp = calculate_metric(temp);
+            temp = calculate_metric(temp, iteration);
             results.push_back(temp);
             printf("Adding (x+1,y): (%d, %d)\n", temp.x, temp.y);
         }
@@ -108,7 +110,7 @@ vector<Coordinates> Lee2Bit::get_adjacent_coordinates(Coordinates c) {
         temp.x = c.x - 1;
         temp.y = c.y;
         if (!is_in_vector(temp)) {
-            temp = calculate_metric(temp);
+            temp = calculate_metric(temp, iteration);
             results.push_back(temp);
             printf("Adding (x-1,y): (%d, %d)\n", temp.x, temp.y);
         }
@@ -119,10 +121,10 @@ vector<Coordinates> Lee2Bit::get_adjacent_coordinates(Coordinates c) {
 /**
 * TODO: Implement 2-bit encoding logic here
 */
-Coordinates Lee2Bit::calculate_metric(Coordinates a) {
+Coordinates Lee2Bit::calculate_metric(Coordinates a, int iteration) {
     Coordinates temp = a;
 
-    temp.dist = 0;
+    temp.dist = iteration;
 
     kMap->get_map()->at(temp.x).at(temp.y) = temp.dist;
 
