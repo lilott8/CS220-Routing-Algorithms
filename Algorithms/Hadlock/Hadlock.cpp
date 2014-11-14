@@ -17,8 +17,8 @@ Hadlock::Hadlock() {
 }
 
 Hadlock::Hadlock(Maps *m) {
-    //LeeBase::LeeBase();
-    //LeeBase::set_map(m);
+    LeeBase::LeeBase();
+    LeeBase::set_map(m);
 }
 
 Hadlock::~Hadlock() {
@@ -27,12 +27,13 @@ Hadlock::~Hadlock() {
 
 void Hadlock::start() {
     LeeBase::start();
+    printf("Starting Hadlock's\n");
 
     kWaveFrontHadlock.push(kSource);
 
     printf("Source coords: %d, %d\n", kSource.x, kSource.y);
 
-    //solve_recursive(0);
+    solve_recursive(0);
 }
 
 int Hadlock::solve_recursive(int iteration) {
@@ -70,13 +71,14 @@ int Hadlock::solve_recursive(int iteration) {
         kWaveFrontHadlock.push(adjacent.at(x));
     }
     printf("******************************\n");
+    kMap->print_map();
     solve_recursive(iteration + 1);
 
     // Handle the trace_back generation for the algorithm
     /**
     * TODO: Implement traceback logic for hadlock
     */
-    if (kTraceBack.size() > 0 && curr.dist <= kTraceBack.back().dist
+    if (kTraceBack.size() > 0 && curr.detour <= kTraceBack.back().detour
             && is_adjacent(curr, kTraceBack.back())) {
         kTraceBack.push_back(curr);
         kMap->get_map()->at(curr.x).at(curr.y) = Maps::kTraceback;

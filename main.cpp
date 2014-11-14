@@ -84,8 +84,8 @@ int main(int argc, char *argv[]) {
     LeeOriginal lo = LeeOriginal(map);
     Lee2Bit l2 = Lee2Bit(map);
     Lee3Bit l3 = Lee3Bit(map);
-    Ruben r = Ruben();
-    Hadlock h = Hadlock();
+    Ruben r = Ruben(map);
+    Hadlock h = Hadlock(map);
 
     switch (a_type) {
         case LEE:
@@ -122,6 +122,7 @@ int main(int argc, char *argv[]) {
 }
 
 MapType resolve_map_type(string a) {
+    printf("Map is: %s\n", a.c_str());
     if (a.compare("file") == 0) {
         return TXT;
     }
