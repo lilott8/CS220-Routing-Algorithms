@@ -18,15 +18,15 @@ void LeeOriginal::start() {
     LeeBase::start();
     printf("Starting LeeOriginal\n");
 
-    LeeBase::kWaveFront.push_back(kSource);
+    LeeBase::kWaveFront.push_back(kMap->get_source_coordinates());
 
-    solve_recursive(0);
+    solve_recursive(1);
 }
 
 int LeeOriginal::solve_recursive(int iteration) {
 
     // Base case 1: Not finding a solution
-    printf("size of queue: %lu\n", kWaveFront.size());
+    //printf("size of queue: %lu\n", kWaveFront.size());
     if (kWaveFront.size() < 1) {
         printf("We have nothing in our queue\n");
         printf("=====================\n\n");
@@ -38,8 +38,10 @@ int LeeOriginal::solve_recursive(int iteration) {
     // pop off the first record
     kWaveFront.pop_front();
 
+    printf("Curr Coordinates: %d, %d\n", curr.x, curr.y);
+
     // Base case 2: We found the sink
-    if (is_sink(curr)) {
+    if (is_sink(curr) || kMap->get_map()->at(curr.x).at(curr.y) == Maps::kSink) {
         // add the sink to the trace_back
         kTraceBack.push_back(curr);
         kMap->get_map()->at(curr.x).at(curr.y) = Maps::kTraceback;
@@ -55,6 +57,8 @@ int LeeOriginal::solve_recursive(int iteration) {
     for (int x = 0; x < adjacent.size(); x++) {
         kWaveFront.push_back(adjacent.at(x));
     }
+    printf("=========================\n");
+    kMap->print_map();
     solve_recursive(iteration + 1);
 
     // Handle the trace_back generation for the algorithm
@@ -75,48 +79,49 @@ vector<Coordinates> LeeOriginal::get_adjacent_coordinates(Coordinates c, int ite
         temp.x = c.x;
         temp.y = c.y + 1;
         if (!is_in_vector(temp)) {
-            temp = calculate_metric(temp);
+            temp = calculate_metric(temp, iteration);
             results.push_back(temp);
             printf("Adding (x,y+1): (%d, %d)\n", temp.x, temp.y);
         }
-    } else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.x, c.y + 1);}
+    }// else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.x, c.y + 1);}
     // (x, y-1)
     if (is_placeable(c.x, c.y - 1)) {
         temp.x = c.x;
         temp.y = c.y - 1;
         if (!is_in_vector(temp)) {
-            temp = calculate_metric(temp);
+            temp = calculate_metric(temp, iteration);
             results.push_back(temp);
             printf("Adding (x,y-1): (%d, %d)\n", temp.x, temp.y);
         }
-    } else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.x, c.y - 1);}
+    }// else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.x, c.y - 1);}
     // (x+1, y)
     if (is_placeable(c.x + 1, c.y)) {
         temp.x = c.x + 1;
         temp.y = c.y;
         if (!is_in_vector(temp)) {
-            temp = calculate_metric(temp);
+            temp = calculate_metric(temp, iteration);
             results.push_back(temp);
             printf("Adding (x+1,y): (%d, %d)\n", temp.x, temp.y);
         }
-    } else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.x + 1, c.y);}
+    }// else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.x + 1, c.y);}
     // (x-1, y)
     if (is_placeable(c.x - 1, c.y)) {
         temp.x = c.x - 1;
         temp.y = c.y;
         if (!is_in_vector(temp)) {
-            temp = calculate_metric(temp);
+            temp = calculate_metric(temp, iteration);
             results.push_back(temp);
             printf("Adding (x-1,y): (%d, %d)\n", temp.x, temp.y);
         }
-    } else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.x - 1, c.y);}
+    }// else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.x - 1, c.y);}
     return results;
 }
 
-Coordinates LeeOriginal::calculate_metric(Coordinates a) {
+Coordinates LeeOriginal::calculate_metric(Coordinates a, int i) {
     Coordinates temp = a;
 
-    temp.dist = LeeBase::calculate_manhattan_distance(a, kSource);
+    //temp.dist = LeeBase::calculate_manhattan_distance(a, kSource);
+    temp.dist = LeeBase::calculate_lees_distance(i);
 
     kMap->get_map()->at(temp.x).at(temp.y) = temp.dist;
 

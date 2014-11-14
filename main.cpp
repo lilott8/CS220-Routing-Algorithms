@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
 
     Maps *map;
 
-    // THere is a rogue argument, so I just have to account for it.
+    // There is a rogue argument, so I just have to account for it.
     switch (argc) {
         case 1:
         default:
@@ -78,6 +78,8 @@ int main(int argc, char *argv[]) {
 
     /**
     * TODO: Figure out how to do variable derivation
+    * This is because I can't figure out how to do
+    * parent->child instantiation
     */
     LeeOriginal lo = LeeOriginal(map);
     Lee2Bit l2 = Lee2Bit(map);
@@ -113,6 +115,7 @@ int main(int argc, char *argv[]) {
             h.start();
             break;
     }
+    printf("-------------------------\n");
     map->print_map();
 
     return 0;

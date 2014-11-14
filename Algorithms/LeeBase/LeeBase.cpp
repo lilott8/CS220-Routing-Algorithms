@@ -74,6 +74,26 @@ double LeeBase::calculate_euclidean_distance(Coordinates a, Coordinates b) {
     return (sqrt(order1 + order2) + .5);
 }
 
+int LeeBase::calculate_lees_distance(int a) {
+
+    //printf("Iteration: %d\n",a);
+    //printf("We will be on \"iteration\": %.2f\n", (ceil(a/4)));
+    /*    if(a == 1) {
+        return 1;
+    } else {
+        if(a % 4 == 0) {
+            return a/4;
+        } else {
+            //if(ceil(a/4) < .1) {
+            //    return a*7;
+            //} else {
+                return (int) (ceil(a/4) *4);
+            //}
+        }
+    }*/
+    return a;
+}
+
 bool LeeBase::is_adjacent(Coordinates a, Coordinates b) {
     if (a.dist == 0) {
         return true;
@@ -86,13 +106,14 @@ bool LeeBase::is_adjacent(Coordinates a, Coordinates b) {
     delta_x = abs(a.x - b.x);
     delta_y = abs(a.y - b.y);
     // Just for debugging!
-    /*
-    if ((delta_x == 0 && delta_y == 1) || (delta_x == 1 && delta_y == 0)) {
+
+    /*if ((delta_x == 0 && delta_y == 1) || (delta_x == 1 && delta_y == 0)) {
         printf("Delta_x: %d, Delta_y: %d\n", delta_x, delta_y);
     } else {
+        printf("Delta_x: %d, Delta_y: %d\n", delta_x, delta_y);
         printf("it's greater than one!\n");
-    }
-    */
+    }*/
+
     //printf("---------------------\n");
     // make sure the result is 1 or less and the delta on x or y is 1
     return result <= 1 && (delta_x == 1 || delta_y == 1);
@@ -139,4 +160,8 @@ bool LeeBase::is_in_vector(Coordinates c) {
         }
     }
     return false;
+}
+
+bool LeeBase::is_same_coordinate(Coordinates a, Coordinates b) {
+    return (a.x == b.x) && (a.y == b.y);
 }
