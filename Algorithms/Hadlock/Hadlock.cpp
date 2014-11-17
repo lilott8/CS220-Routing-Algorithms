@@ -2,16 +2,6 @@
 #include <queue>
 #include "Hadlock.h"
 
-class CompareCoordinates {
-public:
-    bool operator()(Coordinates &a, Coordinates &b) {
-        // do the checking here!
-        return a.detour >= b.detour;
-    }
-};
-
-priority_queue<Coordinates, vector<Coordinates>, CompareCoordinates> kWaveFrontHadlock;
-
 Hadlock::Hadlock() {
     LeeBase::LeeBase();
 }
@@ -29,7 +19,7 @@ void Hadlock::start() {
     LeeBase::start();
     printf("Starting Hadlock's\n");
 
-    kWaveFrontHadlock.push(kSource);
+    kWaveFrontPQ.push(kSource);
 
     printf("Source coords: %d, %d\n", kSource.x, kSource.y);
 
@@ -39,17 +29,17 @@ void Hadlock::start() {
 int Hadlock::solve_recursive(int iteration) {
 
     // Base case 1: Not finding a solution
-    printf("size of queue: %lu\n", kWaveFrontHadlock.size());
-    if (kWaveFrontHadlock.size() < 1) {
+    printf("size of queue: %lu\n", kWaveFrontPQ.size());
+    if (kWaveFrontPQ.size() < 1) {
         printf("We have nothing in our queue\n");
         printf("=====================\n\n");
         return iteration;
     }
 
     // Grab the first record
-    Coordinates curr = kWaveFrontHadlock.top();
+    Coordinates curr = kWaveFrontPQ.top();
     // pop off the first record
-    kWaveFrontHadlock.pop();
+    kWaveFrontPQ.pop();
 
     // Base case 2: We found the sink
     if (is_sink(curr)) {
@@ -68,7 +58,7 @@ int Hadlock::solve_recursive(int iteration) {
     vector<Coordinates> adjacent = get_adjacent_coordinates(curr);
 
     for (int x = 0; x < adjacent.size(); x++) {
-        kWaveFrontHadlock.push(adjacent.at(x));
+        kWaveFrontPQ.push(adjacent.at(x));
     }
     printf("******************************\n");
     kMap->print_map();

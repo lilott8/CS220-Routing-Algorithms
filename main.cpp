@@ -85,6 +85,7 @@ int main(int argc, char *argv[]) {
     Lee2Bit l2 = Lee2Bit(map);
     Lee3Bit l3 = Lee3Bit(map);
     Ruben r = Ruben(map);
+    Ruben k = Ruben(map, korn_modifier);
     Hadlock h = Hadlock(map);
 
     switch (a_type) {
@@ -102,9 +103,9 @@ int main(int argc, char *argv[]) {
             l3.start();
             break;
         case KORN:
-            //*object = Korn(map);
-            // object.set_overpull(korn_modifier);
-            printf("Nothing for KORN yet");
+            printf("Using Ruben + Korn's Modifier Algorithm\n");
+            printf("Your Korn modifier is %.1f\n", korn_modifier);
+            k.start();
             break;
         case RUBEN:
             printf("Using Ruben's Algorithm\n");

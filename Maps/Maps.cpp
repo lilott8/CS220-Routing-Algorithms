@@ -28,40 +28,32 @@ Maps::Maps(string fn) {
         printf("Error finding file %s\n", fn.c_str());
     }
     string line;
-    int x = 0;
+    int y = 0;
     Coordinates s, t;
     while (getline(inFile, line)) {
 
         vector<int> temp;
         Maps::kMap.push_back(temp);
 
-        int y = 0;
+        int x = 0;
         for (char &c : line) {
             if (c == '0') {
-                Maps::kMap.at(x).push_back(0);
+                Maps::kMap.at(y).push_back(0);
             } else if (c == 'b') {
-                Maps::kMap.at(x).push_back(-3);
+                Maps::kMap.at(y).push_back(-3);
             } else if (c == 't') {
-                Maps::kMap.at(x).push_back(-2);
-                //Maps::set_sink(i, line_number);
-                Maps::kSinkCoords.x = x;
-                Maps::kSinkCoords.y = y;
-                t.x = x;
-                t.y = y;
+                Maps::kMap.at(y).push_back(-2);
+                Maps::kSinkCoords.x = y;
+                Maps::kSinkCoords.y = x;
             } else if (c == 's') {
-                Maps::kMap.at(x).push_back(-1);
-                //Maps::set_source(i, line_number);
-                Maps::kSourceCoords.x = x;
-                Maps::kSourceCoords.y = y;
-                s.x = x;
-                s.y = y;
+                Maps::kMap.at(y).push_back(-1);
+                Maps::kSourceCoords.x = y;
+                Maps::kSourceCoords.y = x;
             }
-            y++;
+            x++;
         }
-        x++;
+        y++;
     }
-    //Maps::set_source(s.x, s.y);
-    //Maps::set_sink(t.x, t.y);
     inFile.close();
     printf("Done reading file\n");
 }
