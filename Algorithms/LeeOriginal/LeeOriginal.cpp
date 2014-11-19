@@ -11,7 +11,8 @@ LeeOriginal::LeeOriginal(Maps *m) {
 }
 
 LeeOriginal::~LeeOriginal() {
-    LeeBase::~LeeBase();
+    // TODO: Figure out why this line sigabrts
+    // LeeBase::~LeeBase();
 }
 
 void LeeOriginal::start() {
@@ -24,6 +25,8 @@ void LeeOriginal::start() {
 }
 
 int LeeOriginal::solve_recursive(int iteration) {
+
+    printf("Queue size: %d\n", kWaveFront.size());
 
     // Base case 1: Not finding a solution
     //printf("size of queue: %lu\n", kWaveFront.size());
@@ -121,7 +124,7 @@ Coordinates LeeOriginal::calculate_metric(Coordinates a, int i) {
     Coordinates temp = a;
 
     //temp.dist = LeeBase::calculate_manhattan_distance(a, kSource);
-    temp.dist = LeeBase::calculate_lees_distance(i);
+    temp.dist = LeeBase::calculate_lees_distance(a);
 
     kMap->get_map()->at(temp.x).at(temp.y) = temp.dist;
 

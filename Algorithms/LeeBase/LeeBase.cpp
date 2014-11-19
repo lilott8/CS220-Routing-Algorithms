@@ -8,6 +8,7 @@ Coordinates kSink;
 Coordinates kSource;
 deque<Coordinates> kWaveFront;
 vector<Coordinates> kTraceBack;
+int kWaveFrontCounter = 1;
 
 LeeBase::LeeBase() {
 
@@ -74,24 +75,37 @@ double LeeBase::calculate_euclidean_distance(Coordinates a, Coordinates b) {
     return (sqrt(order1 + order2) + .5);
 }
 
-int LeeBase::calculate_lees_distance(int a) {
-
-    //printf("Iteration: %d\n",a);
-    //printf("We will be on \"iteration\": %.2f\n", (ceil(a/4)));
-    /*    if(a == 1) {
-        return 1;
-    } else {
-        if(a % 4 == 0) {
-            return a/4;
-        } else {
-            //if(ceil(a/4) < .1) {
-            //    return a*7;
-            //} else {
-                return (int) (ceil(a/4) *4);
-            //}
+int LeeBase::calculate_lees_distance(Coordinates c) {
+    // take care of our seed case
+    vector<int> answer;
+    // (x, y+1)
+    if (is_in_bounds(c.x, c.y + 1)) {
+        answer.push_back(kMap->get_map()->at(c.x).at(c.y + 1));
+    }
+    // (x, y-1)
+    if (is_in_bounds(c.x, c.y - 1)) {
+        answer.push_back(kMap->get_map()->at(c.x).at(c.y - 1));
+    }
+    // (x+1, y)
+    if (is_in_bounds(c.x + 1, c.y)) {
+        answer.push_back(kMap->get_map()->at(c.x + 1).at(c.y));
+    }
+    // (x-1, y)
+    if (is_in_bounds(c.x - 1, c.y)) {
+        answer.push_back(kMap->get_map()->at(c.x - 1).at(c.y));
+    }
+    printf("Our options are:\n");
+    int new_low = 0;
+    for (int x = 0; x < answer.size(); x++) {
+        if (answer.at(x) >= 1 && answer.at(x) > new_low) {
+            printf("Changing new_low from: %d to %d\n", new_low, answer.at(x));
+            new_low = answer.at(x);
         }
-    }*/
-    return a;
+        printf("%d: %d\n", x, answer.at(x));
+    }
+    printf("Done with options\n");
+    //return min_element(begin(answer), end(answer)) + 1;
+    return new_low + 1;
 }
 
 bool LeeBase::is_adjacent(Coordinates a, Coordinates b) {
@@ -147,6 +161,11 @@ bool LeeBase::is_placeable(int x, int y) {
     temp.x = x;
     temp.y = y;
     return is_placeable(temp);
+}
+
+bool LeeBase::is_in_bounds(int x, int y) {
+    return (x < kMap->get_map()->size() && x >= 0) &&
+            (y < kMap->get_map()->at(x).size() && y >= 0);
 }
 
 bool LeeBase::is_adjacent_to_source(Coordinates c) {

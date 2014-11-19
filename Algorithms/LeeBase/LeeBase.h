@@ -26,12 +26,13 @@ protected:
     Maps *kMap;
     deque<Coordinates> kWaveFront;
     vector<Coordinates> kTraceBack;
+    int kWaveFrontCounter;
 
     int calculate_manhattan_distance(int, int);
 
     int calculate_manhattan_distance(Coordinates, Coordinates);
 
-    int calculate_lees_distance(int);
+    int calculate_lees_distance(Coordinates);
 
     int caclulate_euclidean_distance(int, int);
 
@@ -54,6 +55,8 @@ protected:
     bool is_adjacent_to_source(Coordinates);
 
     bool is_in_vector(Coordinates);
+
+    bool is_in_bounds(int, int);
 
     bool is_same_coordinate(Coordinates, Coordinates);
 };

@@ -119,6 +119,8 @@ int main(int argc, char *argv[]) {
     printf("-------------------------\n");
     map->print_map();
 
+    delete(map);
+
     return 0;
 }
 
@@ -168,8 +170,8 @@ Maps *do_test() {
     printf("Generating a test map\n");
     // The sink/source are always in the same spot
     Maps *debug_map = new Maps();
-    debug_map->set_difficulty(7)
-            .set_sink(0, 6)
+    debug_map->set_difficulty(10)
+            .set_sink(0, 9)
             .set_source(3, 3);
     return debug_map;
 }
