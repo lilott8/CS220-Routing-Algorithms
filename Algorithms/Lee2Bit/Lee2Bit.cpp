@@ -124,7 +124,13 @@ vector<Coordinates> Lee2Bit::get_adjacent_coordinates(Coordinates c, int iterati
 Coordinates Lee2Bit::calculate_metric(Coordinates a, int iteration) {
     Coordinates temp = a;
 
-    temp.dist = iteration;
+    int distance = iteration;
+
+    if (distance % 4 == 0 || distance % 4 == 1) {
+        temp.dist = 1;
+    } else {
+        temp.dist = 2;
+    }
 
     kMap->get_map()->at(temp.x).at(temp.y) = temp.dist;
 

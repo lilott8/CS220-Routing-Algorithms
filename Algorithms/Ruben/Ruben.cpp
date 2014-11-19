@@ -126,9 +126,9 @@ vector<Coordinates> Ruben::get_adjacent_coordinates(Coordinates c, int iteration
 
 Coordinates Ruben::calculate_metric(Coordinates c, int i) {
     if (kUsingRuben) {
-        c.dist = calculate_manhattan_distance(c, kSource) + calculate_manhattan_distance(c, kSink);
+        c.dist = calculate_lees_distance(c) + calculate_manhattan_distance(c, kSink);
     } else {
-        c.dist = (int) ((calculate_manhattan_distance(c, kSource) + (kKornModifier * calculate_manhattan_distance(c, kSink))) * .5);
+        c.dist = (int) ((calculate_lees_distance(c) + (kKornModifier * calculate_manhattan_distance(c, kSink))) * .5);
     }
     kMap->get_map()->at(c.x).at(c.y) = c.dist;
     return c;

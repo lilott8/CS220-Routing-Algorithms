@@ -12,6 +12,7 @@ struct Coordinates {
     int y;
     int dist;
     int detour;
+    int wave;
 };
 
 struct node {
