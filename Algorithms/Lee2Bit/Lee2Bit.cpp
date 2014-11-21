@@ -121,18 +121,48 @@ vector<Coordinates> Lee2Bit::get_adjacent_coordinates(Coordinates c, int iterati
 /**
 * TODO: Implement 2-bit encoding logic here
 */
-Coordinates Lee2Bit::calculate_metric(Coordinates a, int iteration) {
-    Coordinates temp = a;
+Coordinates Lee2Bit::calculate_metric(Coordinates c, int iteration) {
+    Coordinates temp = c;
 
-    int distance = iteration;
-
-    if (distance % 4 == 0 || distance % 4 == 1) {
-        temp.dist = 1;
-    } else {
-        temp.dist = 2;
+    // take care of our seed case
+    vector<int> answer;
+    answer.push_back(0);
+    answer.push_back(0);
+    answer.push_back(0);
+    answer.push_back(0);
+    //vector<int> answer;
+    // (x, y+1) EAST answer[1]
+    if (is_in_bounds(c.x, c.y + 1) && is_in_bounds(c.x, c.y + 2)) {
+        answer.at(1) = kMap->get_map()->at(c.x).at(c.y + 1) +
+                kMap->get_map()->at(c.x).at(c.y + 2);
     }
+    // (x, y-1) WEST answer[3]
+    if (is_in_bounds(c.x, c.y - 1) && is_in_bounds(c.x, c.y - 2)) {
+        answer.at(3) = kMap->get_map()->at(c.x).at(c.y - 1) +
+                kMap->get_map()->at(c.x).at(c.y - 2);
+    }
+    // (x+1, y) NORTH answer[0]
+    if (is_in_bounds(c.x + 1, c.y && is_in_bounds(c.x + 2, c.y))) {
+        answer.at(0) = kMap->get_map()->at(c.x + 1).at(c.y) +
+                kMap->get_map()->at(c.x + 2).at(c.y);
+    }
+    // (x-1, y) SOUTH answer[2]
+    if (is_in_bounds(c.x - 1, c.y) && is_in_bounds(c.x - 2, c.y)) {
+        answer.at(2) = kMap->get_map()->at(c.x - 1).at(c.y) +
+                kMap->get_map()->at(c.x - 2).at(c.y);
+    }
+    printf("Our options are:\n");
+    int new_low = 0;
+    for (int x = 0; x < answer.size(); x++) {
+        if (answer.at(x) >= 1 && answer.at(x) > new_low) {
+            printf("Changing new_low from: %d to %d\n", new_low, answer.at(x));
+            new_low = answer.at(x);
+        }
+        printf("%d: %d\n", x, answer.at(x));
+    }
+    printf("Done with options\n");
 
-    kMap->get_map()->at(temp.x).at(temp.y) = temp.dist;
+    kMap->get_map()->at(temp.x).at(temp.y) = temp.dist + 1;
 
     return temp;
 }
