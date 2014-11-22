@@ -2,11 +2,11 @@
 #include "LeeOriginal.h"
 
 LeeOriginal::LeeOriginal() {
-    LeeBase::LeeBase();
+    //LeeBase::LeeBase();
 }
 
 LeeOriginal::LeeOriginal(Maps *m) {
-    LeeBase::LeeBase();
+    //LeeBase::LeeBase();
     LeeBase::set_map(m);
 }
 

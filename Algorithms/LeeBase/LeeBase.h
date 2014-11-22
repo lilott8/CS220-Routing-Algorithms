@@ -17,7 +17,7 @@ public:
 
     LeeBase &set_coordinates(Coordinates, Coordinates);
 
-    void start();
+    virtual void start() = 0;
 
     // Make sure child classes can get access to these!
 protected:

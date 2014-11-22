@@ -3,20 +3,20 @@
 #include "Hadlock.h"
 
 Hadlock::Hadlock() {
-    LeeBase::LeeBase();
+    //LeeBase::LeeBase();
 }
 
 Hadlock::Hadlock(Maps *m) {
-    LeeBase::LeeBase();
+    //LeeBase::LeeBase();
     LeeBase::set_map(m);
 }
 
 Hadlock::~Hadlock() {
-    LeeBase::~LeeBase();
+    //LeeBase::~LeeBase();
 }
 
 void Hadlock::start() {
-    LeeBase::start();
+    //LeeBase::start();
     printf("Starting Hadlock's\n");
 
     kWaveFrontPQ.push(kSource);

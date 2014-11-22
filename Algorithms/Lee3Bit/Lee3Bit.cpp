@@ -2,20 +2,20 @@
 #include "Lee3Bit.h"
 
 Lee3Bit::Lee3Bit() {
-    LeeBase::LeeBase();
+    //LeeBase::LeeBase();
 }
 
 Lee3Bit::Lee3Bit(Maps *m) {
-    LeeBase::LeeBase();
+    //LeeBase::LeeBase();
     LeeBase::set_map(m);
 }
 
 Lee3Bit::~Lee3Bit() {
-    LeeBase::~LeeBase();
+    //LeeBase::~LeeBase();
 }
 
 void Lee3Bit::start() {
-    LeeBase::start();
+    //LeeBase::start();
 
     printf("Looking for the sink: %d, %d\n", kSink.x, kSink.y);
 

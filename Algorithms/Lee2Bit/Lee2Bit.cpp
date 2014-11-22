@@ -2,20 +2,20 @@
 #include "Lee2Bit.h"
 
 Lee2Bit::Lee2Bit() {
-    LeeBase::LeeBase();
+    //LeeBase::LeeBase();
 }
 
 Lee2Bit::Lee2Bit(Maps *m) {
-    LeeBase::LeeBase();
+    //LeeBase::LeeBase();
     LeeBase::set_map(m);
 }
 
 Lee2Bit::~Lee2Bit() {
-    LeeBase::~LeeBase();
+    //LeeBase::~LeeBase();
 }
 
 void Lee2Bit::start() {
-    LeeBase::start();
+    //LeeBase::start();
 
     LeeBase::kWaveFront.push_back(kSource);
 

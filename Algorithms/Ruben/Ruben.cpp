@@ -1,29 +1,29 @@
 #include "Ruben.h"
 
 Ruben::Ruben() {
-    LeeBase::LeeBase();
+    //LeeBase::LeeBase();
     kUsingRuben = true;
 }
 
 Ruben::Ruben(Maps *m) {
-    LeeBase::LeeBase();
+    //LeeBase::LeeBase();
     LeeBase::set_map(m);
     kUsingRuben = true;
 }
 
 Ruben::~Ruben() {
-    LeeBase::~LeeBase();
+    //LeeBase::~LeeBase();
 }
 
 Ruben::Ruben(Maps *m, double korn) {
-    LeeBase::LeeBase();
+    //LeeBase::LeeBase();
     LeeBase::set_map(m);
     kKornModifier = korn;
     kUsingRuben = false;
 }
 
 void Ruben::start() {
-    LeeBase::start();
+    //LeeBase::start();
     printf("Starting Ruben's Algorithm\n");
 
     kWaveFrontPQ.push(kSource);
